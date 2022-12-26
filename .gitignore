@@ -40,6 +40,7 @@
 *.iml
 *.ipr
 .gradle
+*.yml
 /build/
 /out/
 HELP.md
