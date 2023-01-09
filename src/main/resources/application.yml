@@ -11,10 +11,13 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/dna?serverTimezone=Asia/Seoul
-    username: cos
-    password: cos1234
+    username: dna
+    password: dna12345
 
   jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
     hibernate:
       ddl-auto: update #create update none
       naming:
