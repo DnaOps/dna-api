@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Notice extends BaseEntity {
+public class Notices extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,7 +23,7 @@ public class Notice extends BaseEntity {
     private String author;
 
     @Builder
-    public Notice(String title, String content, String author) {
+    public Notices(String title, String content, String author) {
         this.title = title;
         this.content = content;
         this.author = author;
