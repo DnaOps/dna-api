@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class NoticesDeleteRequestDto {
-    private Long id;
+    private Long noticeId;
 
     @Builder
-    public NoticesDeleteRequestDto(Long id) {
-        this.id = id;
+    public NoticesDeleteRequestDto(Long noticeId) {
+        this.noticeId = noticeId;
     }
 }

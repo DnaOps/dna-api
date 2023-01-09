@@ -1,6 +1,5 @@
 package dgu.edu.dnaapi;
 
-import com.mysql.cj.protocol.x.Notice;
 import dgu.edu.dnaapi.domain.Notices;
 
 import dgu.edu.dnaapi.domain.dto.NoticesDeleteRequestDto;
@@ -91,12 +90,12 @@ public class NoticesRepositoryTest {
                 .author("km")
                 .build());
 
-        Long updateId = savedNotices.getId();
+        Long updateId = savedNotices.getNoticeId();
         String expectedTitle = "title2";
         String expectedContent = "content2";
 
         NoticesUpdateRequestDto requestDto = NoticesUpdateRequestDto.builder()
-                .id(updateId)
+                .noticeId(updateId)
                 .title(expectedTitle)
                 .content(expectedContent)
                 .build();
@@ -123,10 +122,10 @@ public class NoticesRepositoryTest {
                 .author("km")
                 .build());
 
-        Long deleteId = savedNotices.getId();
+        Long deleteId = savedNotices.getNoticeId();
 
         NoticesDeleteRequestDto requestDto = NoticesDeleteRequestDto.builder()
-                .id(deleteId)
+                .noticeId(deleteId)
                 .build();
         String url = "http://localhost:" + port + "/boards/notices";
 

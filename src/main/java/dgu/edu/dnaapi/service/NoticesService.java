@@ -17,12 +17,12 @@ public class NoticesService {
     @Transactional
     public Long save(NoticesSaveRequestDto requestDto) {
         return noticesRepository.save(requestDto.toEntity())
-                .getId();
+                .getNoticeId();
     }
 
     @Transactional
     public Long update(NoticesUpdateRequestDto requestDto) {
-        Long id = requestDto.getId();
+        Long id = requestDto.getNoticeId();
         Notices notices = noticesRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
         notices.update(requestDto.getTitle(), requestDto.getContent());
@@ -37,7 +37,7 @@ public class NoticesService {
 
     @Transactional
     public Long delete(NoticesUpdateRequestDto requestDto) {
-        Long deleteId = requestDto.getId();
+        Long deleteId = requestDto.getNoticeId();
         noticesRepository.deleteById(deleteId);
 
         return deleteId;
