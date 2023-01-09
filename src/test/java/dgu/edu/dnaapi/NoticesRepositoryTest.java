@@ -3,7 +3,9 @@ package dgu.edu.dnaapi;
 import com.mysql.cj.protocol.x.Notice;
 import dgu.edu.dnaapi.domain.Notices;
 
+import dgu.edu.dnaapi.domain.dto.NoticesDeleteRequestDto;
 import dgu.edu.dnaapi.domain.dto.NoticesSaveRequestDto;
+import dgu.edu.dnaapi.domain.dto.NoticesUpdateRequestDto;
 import dgu.edu.dnaapi.repository.NoticesRepository;
 import org.junit.After;
 import org.junit.Test;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -79,5 +83,62 @@ public class NoticesRepositoryTest {
         assertThat(all.get(0).getContent()).isEqualTo(content);
     }
 
+    @Test
+    public void 공지사항_수정하기() throws Exception {
+        Notices savedNotices = noticesRepository.save(Notices.builder()
+                .title("ex-title")
+                .content("ex-content")
+                .author("km")
+                .build());
 
+        Long updateId = savedNotices.getId();
+        String expectedTitle = "title2";
+        String expectedContent = "content2";
+
+        NoticesUpdateRequestDto requestDto = NoticesUpdateRequestDto.builder()
+                .id(updateId)
+                .title(expectedTitle)
+                .content(expectedContent)
+                .build();
+        String url = "http://localhost:" + port + "/boards/notices";
+
+        HttpEntity<NoticesUpdateRequestDto> requestEntity = new HttpEntity<>(requestDto);
+
+        ResponseEntity<Long> responseEntity = restTemplate
+                .exchange(url, HttpMethod.PUT, requestEntity, Long.class);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isGreaterThan(0L);
+
+        List<Notices> all = noticesRepository.findAll();
+        assertThat(all.get(0).getTitle()).isEqualTo(expectedTitle);
+        assertThat(all.get(0).getContent()).isEqualTo(expectedContent);
+    }
+
+    @Test
+    public void 공지사항_삭제하기() {
+        Notices savedNotices = noticesRepository.save(Notices.builder()
+                .title("ex-title")
+                .content("ex-content")
+                .author("km")
+                .build());
+
+        Long deleteId = savedNotices.getId();
+
+        NoticesDeleteRequestDto requestDto = NoticesDeleteRequestDto.builder()
+                .id(deleteId)
+                .build();
+        String url = "http://localhost:" + port + "/boards/notices";
+
+        HttpEntity<NoticesDeleteRequestDto> requestEntity = new HttpEntity<>(requestDto);
+
+        ResponseEntity<Long> responseEntity = restTemplate
+                .exchange(url, HttpMethod.DELETE, requestEntity, Long.class);
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        List<Notices> all = noticesRepository.findAll();
+
+        assertThat(all.size()).isEqualTo(0);
+    }
 }
