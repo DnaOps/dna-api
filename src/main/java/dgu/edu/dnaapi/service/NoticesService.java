@@ -6,8 +6,13 @@ import dgu.edu.dnaapi.domain.dto.NoticesSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.NoticesUpdateRequestDto;
 import dgu.edu.dnaapi.repository.NoticesRepository;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Not;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -16,8 +21,7 @@ public class NoticesService {
 
     @Transactional
     public Long save(NoticesSaveRequestDto requestDto) {
-        return noticesRepository.save(requestDto.toEntity())
-                .getNoticeId();
+        return noticesRepository.save(requestDto.toEntity()).getNoticeId();
     }
 
     @Transactional
@@ -41,5 +45,11 @@ public class NoticesService {
         noticesRepository.deleteById(deleteId);
 
         return deleteId;
+    }
+
+    public List<NoticesResponseDto> findAll() {
+        List<Notices> noticesList = noticesRepository
+                .findAll(Sort.by(Sort.Direction.DESC, "noticeId"));
+        return noticesList.stream().map(NoticesResponseDto::new).collect(Collectors.toList());
     }
 }

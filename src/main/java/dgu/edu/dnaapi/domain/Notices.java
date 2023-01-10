@@ -20,6 +20,7 @@ public class Notices extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Column(nullable = false)
     private String author;
 
     @Builder
