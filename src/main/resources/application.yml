@@ -16,7 +16,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update #create update none
+      ddl-auto: create #create update none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
@@ -31,12 +31,6 @@ spring:
             scope:
               - email
               - profile
-          facebook:
-            client-id: 2017995998398650
-            client-secret: b247819887cc494b408d9a31d5237e6e
-            scope:
-              - email
-              - public_profile
 
           naver:
             client-id: cQlbQYwsZaeonqXEK_lJ
@@ -47,7 +41,7 @@ spring:
               - profile_image
             client-name: Naver
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
+            redirect-uri: http://54.176.107.120:8080//login/oauth2/code/naver
 
         provider:
           naver:
