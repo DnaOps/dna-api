@@ -3,10 +3,7 @@ package dgu.edu.dnaapi.controller;
 import dgu.edu.dnaapi.domain.dto.NoticesResponseDto;
 import dgu.edu.dnaapi.domain.dto.NoticesSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.NoticesUpdateRequestDto;
-import dgu.edu.dnaapi.domain.response.ListResponse;
-import dgu.edu.dnaapi.domain.response.Message;
-import dgu.edu.dnaapi.domain.response.ResponseEntity;
-import dgu.edu.dnaapi.domain.response.StatusEnum;
+import dgu.edu.dnaapi.domain.response.*;
 import dgu.edu.dnaapi.service.NoticesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -25,8 +22,7 @@ public class NoticesController {
         Long savedId = noticesService.save(requestDto);
         Message message = Message.builder()
                 .data(savedId)
-                .status(StatusEnum.OK)
-                .message(null)
+                .apiStatus(new ApiStatus(StatusEnum.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -37,8 +33,7 @@ public class NoticesController {
         Long updateId = noticesService.update(requestDto);
         Message message = Message.builder()
                 .data(updateId)
-                .status(StatusEnum.OK)
-                .message(null)
+                .apiStatus(new ApiStatus(StatusEnum.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -49,8 +44,7 @@ public class NoticesController {
         NoticesResponseDto responseDto = noticesService.findById(id);
         Message message = Message.builder()
                 .data(responseDto)
-                .status(StatusEnum.OK)
-                .message(null)
+                .apiStatus(new ApiStatus(StatusEnum.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -66,8 +60,7 @@ public class NoticesController {
 
         Message message = Message.builder()
                 .data(listResponse)
-                .status(StatusEnum.OK)
-                .message(null)
+                .apiStatus(new ApiStatus(StatusEnum.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -78,8 +71,7 @@ public class NoticesController {
         Long deleteId = noticesService.delete(requestDto);
         Message message = Message.builder()
                 .data(deleteId)
-                .status(StatusEnum.OK)
-                .message(null)
+                .apiStatus(new ApiStatus(StatusEnum.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);

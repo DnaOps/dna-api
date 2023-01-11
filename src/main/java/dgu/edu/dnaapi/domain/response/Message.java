@@ -9,25 +9,20 @@ import lombok.Setter;
 @Setter
 public class Message {
 
-    @ApiModelProperty(example = "상태코드")
-    private StatusEnum status;
-
-    @ApiModelProperty(example = "오류 메시지")
-    private String message;
+    @ApiModelProperty(example = "DNA API 응답 코드 정보")
+    private ApiStatus apiStatus;
 
     @ApiModelProperty(example = "응답 데이터")
     private Object data;
 
     public Message() {
-        this.status = StatusEnum.BAD_REQUEST;
+        this.apiStatus = new ApiStatus(StatusEnum.BAD_REQUEST, "");
         this.data = null;
-        this.message = null;
     }
 
     @Builder
-    public Message(StatusEnum status, String message, Object data) {
-        this.status = status;
-        this.message = message;
+    public Message(ApiStatus apiStatus, Object data) {
+        this.apiStatus = apiStatus;
         this.data = data;
     }
 }
