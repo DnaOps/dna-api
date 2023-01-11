@@ -1,6 +1,7 @@
 package dgu.edu.dnaapi.util.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dgu.edu.dnaapi.domain.response.ApiStatus;
 import dgu.edu.dnaapi.domain.response.Message;
 import dgu.edu.dnaapi.domain.response.StatusEnum;
 import org.slf4j.Logger;
@@ -29,8 +30,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         PrintWriter writer = response.getWriter();
 
         Message message = Message.builder()
-                .message("JWT Authentication Error")
-                .status(StatusEnum.UNAUTHORIZED)
+                .apiStatus(new ApiStatus(StatusEnum.UNAUTHORIZED,"JWT Authentication Error" ))
                 .build();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ObjectMapper om = new ObjectMapper();

@@ -4,10 +4,7 @@ import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.UserDto;
 import dgu.edu.dnaapi.domain.UserRole;
-import dgu.edu.dnaapi.domain.dto.LoginRequestDto;
-import dgu.edu.dnaapi.domain.dto.RefreshTokenDto;
-import dgu.edu.dnaapi.domain.dto.TokenDto;
-import dgu.edu.dnaapi.domain.dto.TokenResponse;
+import dgu.edu.dnaapi.domain.dto.*;
 import dgu.edu.dnaapi.domain.response.ApiStatus;
 import dgu.edu.dnaapi.domain.response.Message;
 import dgu.edu.dnaapi.domain.response.ResponseEntity;
@@ -72,14 +69,25 @@ public class AuthController {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtProperties.HEADER_STRING, "Bearer " + accessToken);
-        TokenResponse result = TokenResponse.builder()
+
+        TokenResponse tokenResponse = TokenResponse.builder()
                 .jwt(new TokenDto(accessToken, refreshToken))
                 .exist(false)
                 .build();
+
+        // Todo : 게시글, 댓글 수 가져오기
+        UserDto userResponse = UserDto.builder().username(findUser.getUsername())
+                .createdDate(findUser.getCreatedDate())
+                .role(findUser.getRole())
+                .build();
+
+        LoginResponseDto result = new LoginResponseDto(tokenResponse, userResponse);
+
         Message message = Message.builder()
                                     .data(result)
                                     .apiStatus(new ApiStatus(StatusEnum.OK, null))
                                     .build();
+
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
