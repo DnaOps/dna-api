@@ -1,5 +1,6 @@
 package dgu.edu.dnaapi.domain;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,8 +20,10 @@ public class BaseEntity {
 
     @CreatedDate
     @Column(updatable = false)
+    @ApiModelProperty(example = "데이터 생성 시간")
     private LocalDateTime createdDate;
 
     @LastModifiedDate
+    @ApiModelProperty(example = "마지막 데이터 수정 시간")
     private LocalDateTime lastModifiedDate;
 }

@@ -35,6 +35,7 @@
 .springBeans
 
 ### IntelliJ IDEA ###
+.properties
 .idea
 *.iws
 *.iml

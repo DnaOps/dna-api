@@ -15,6 +15,7 @@ import dgu.edu.dnaapi.repository.refreshtoken.RefreshTokenRepository;
 import dgu.edu.dnaapi.service.TokenService;
 import dgu.edu.dnaapi.service.UserService;
 import dgu.edu.dnaapi.util.jwt.TokenProvider;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,11 +23,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@RequestMapping("/auth/")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -39,6 +38,7 @@ public class AuthController {
 
 
     @PostMapping("/signUp")
+    @ApiOperation(value = "회원가입", notes = "회원가입을 진행한다.")
     public String signUp(@RequestBody User user) {
         user.setRole(UserRole.USER_ROLE);
         System.out.println("user = " + user);
@@ -50,6 +50,7 @@ public class AuthController {
      * 로그인
      * */
     @PostMapping("/authenticate")
+    @ApiOperation(value = "로그인", notes = "유저의 로그인을 진행한다.")
     public ResponseEntity<Message> authorize(@RequestBody LoginRequestDto loginRequestDto) {
 
         System.out.println("loginRequestDto.getEmail() = " + loginRequestDto.getEmail());
@@ -77,6 +78,7 @@ public class AuthController {
     }
 
     @PostMapping("/accessToken")
+    @ApiOperation(value = "AccessToken 발급", notes = "유저의 Refresh Token 을 이용해 Access Token 재발급한다.")
     /**
      *  {
      *      refreshToken : xx
@@ -96,6 +98,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @ApiOperation(value = "로그아웃", notes = "유저의 로그아웃을 진행한다.")
     public ResponseEntity<Message> logOut(@RequestBody RefreshTokenDto refreshToken) {
         // Todo : 1. accessToken 확인 2. RefreshToken 삭제 (userId 이용) 3. BlackList (유효기간동안 접근시)
         Message message = Message.builder().data("LogoutTest").status(StatusEnum.OK).message(null).build();
@@ -104,6 +107,7 @@ public class AuthController {
     }
 
     @GetMapping("/test/authTest")
+    @ApiOperation(value = "권한적용 체크", notes = "권한이 제한이 이루워지고 있는지 확인한다.")
     public String authTest(){
         return "AuthTest";
     }

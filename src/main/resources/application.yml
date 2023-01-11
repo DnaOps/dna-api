@@ -11,10 +11,13 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/dna?serverTimezone=Asia/Seoul
-    username: cos
-    password: cos1234
+    username: dna
+    password: dna12345
 
   jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
     hibernate:
       ddl-auto: create #create update none
       naming:
@@ -53,6 +56,9 @@ spring:
     host: localhost
     port: 6379
 
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 jwt:
   header: Authorization
   secret: DNAWEBPROJECTBACKENDMADEBYHOJUNLEEGpqYWJhZWdpLWp3dC10ZXN0LWFsamphYmFlZ2ktand0LXRlc3QtYWxqamFiYWVnaS1qd3QtdGVzdC1hbGpqYWJhZWd13123nandkjfan1ijaiodfnlksnfhleoo2akworldaasdfasfasdfas123123asdfp
