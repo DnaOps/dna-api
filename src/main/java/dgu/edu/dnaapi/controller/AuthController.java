@@ -2,6 +2,7 @@ package dgu.edu.dnaapi.controller;
 
 import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.domain.User;
+import dgu.edu.dnaapi.domain.UserDto;
 import dgu.edu.dnaapi.domain.UserRole;
 import dgu.edu.dnaapi.domain.dto.LoginRequestDto;
 import dgu.edu.dnaapi.domain.dto.RefreshTokenDto;
@@ -39,11 +40,12 @@ public class AuthController {
 
     @PostMapping("/signUp")
     @ApiOperation(value = "회원가입", notes = "회원가입을 진행한다.")
-    public String signUp(@RequestBody User user) {
+    public ResponseEntity<Message> signUp(@RequestBody User user) {
         user.setRole(UserRole.USER_ROLE);
-        System.out.println("user = " + user);
-        userService.join(user);
-        return user.getUsername();
+        Long userId = userService.join(user);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        Message message = Message.builder().data(userId).status(StatusEnum.OK).message(null).build();
+        return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
     /**
