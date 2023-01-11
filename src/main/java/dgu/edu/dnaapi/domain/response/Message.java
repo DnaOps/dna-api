@@ -1,5 +1,6 @@
 package dgu.edu.dnaapi.domain.response;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +9,13 @@ import lombok.Setter;
 @Setter
 public class Message {
 
+    @ApiModelProperty(example = "상태코드")
     private StatusEnum status;
+
+    @ApiModelProperty(example = "오류 메시지")
     private String message;
+
+    @ApiModelProperty(example = "응답 데이터")
     private Object data;
 
     public Message() {

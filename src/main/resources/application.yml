@@ -59,6 +59,9 @@ spring:
     host: localhost
     port: 6379
 
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 jwt:
   header: Authorization
   secret: DNAWEBPROJECTBACKENDMADEBYHOJUNLEEGpqYWJhZWdpLWp3dC10ZXN0LWFsamphYmFlZ2ktand0LXRlc3QtYWxqamFiYWVnaS1qd3QtdGVzdC1hbGpqYWJhZWd13123nandkjfan1ijaiodfnlksnfhleoo2akworldaasdfasfasdfas123123asdfp
