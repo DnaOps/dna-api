@@ -26,7 +26,7 @@ public class Notices extends BaseEntity {
     private User author;
 
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Comments> comments;
+    private List<NoticeComments> comments;
 
     @Builder
     public Notices(String title, String content, User author) {

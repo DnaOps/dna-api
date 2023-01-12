@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Comments extends BaseEntity {
+public class NoticeComments extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,35 +21,49 @@ public class Comments extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parentId")
-    private Comments parent;
+    private NoticeComments parent;
+
+    private Long parentCommentId;
 
     @OneToMany(mappedBy = "parent")
-    private List<Comments> childList;
+    private List<NoticeComments> childList;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "noticeId", nullable = false)
     private Notices notice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "userId", nullable = true) // todo: 고민 nullable true or false?
     private User author;
+
+    private String username;
 
     private int likeCount;
 
     @Builder
-    public Comments(Notices notice, User author, String content, Comments parent, int likeCount) {
+    public NoticeComments(Notices notice, Long noticeId, User author, String content, NoticeComments parent, Long parentCommentId, int likeCount) {
         this.notice = notice;
         this.author = author;
         this.content = content;
         this.parent = parent;
+        this.parentCommentId = parentCommentId;
         this.likeCount = likeCount;
     }
 
-    public void addChild(Comments child){
+    public void addChild(NoticeComments child){
         childList.add(child);
     }
 
     public void update(String content) {
         this.content = content;
     }
+
+    public void registerNotice(Notices notice) {
+        this.notice = notice;
+    }
+    public void registerParent(NoticeComments parent) {
+        this.parent = parent;
+    }
+
+
 }

@@ -48,7 +48,7 @@ public class NoticesRepositoryTest {
         noticesRepository.save(Notices.builder()
                 .title(title)
                 .content(content)
-                .author("test@test.com")
+//                .author("test@test.com")
                 .build());
 
         List<Notices> noticeList = noticesRepository.findAll();
@@ -66,7 +66,6 @@ public class NoticesRepositoryTest {
         NoticesSaveRequestDto requestDto = NoticesSaveRequestDto.builder()
                 .title(title)
                 .content(content)
-                .author("author")
                 .build();
 
         String url = "http://localhost:" + port + "/boards/notices";
@@ -87,7 +86,7 @@ public class NoticesRepositoryTest {
         Notices savedNotices = noticesRepository.save(Notices.builder()
                 .title("ex-title")
                 .content("ex-content")
-                .author("km")
+//                .author("km")
                 .build());
 
         Long updateId = savedNotices.getNoticeId();
@@ -119,7 +118,7 @@ public class NoticesRepositoryTest {
         Notices savedNotices = noticesRepository.save(Notices.builder()
                 .title("ex-title")
                 .content("ex-content")
-                .author("km")
+//                .author("km")
                 .build());
 
         Long deleteId = savedNotices.getNoticeId();

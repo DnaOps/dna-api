@@ -1,12 +1,12 @@
 package dgu.edu.dnaapi.service;
 
 import dgu.edu.dnaapi.domain.Notices;
+import dgu.edu.dnaapi.domain.dto.NoticesDeleteRequestDto;
 import dgu.edu.dnaapi.domain.dto.NoticesResponseDto;
 import dgu.edu.dnaapi.domain.dto.NoticesSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.NoticesUpdateRequestDto;
 import dgu.edu.dnaapi.repository.NoticesRepository;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +40,7 @@ public class NoticesService {
     }
 
     @Transactional
-    public Long delete(NoticesUpdateRequestDto requestDto) {
+    public Long delete(NoticesDeleteRequestDto requestDto) {
         Long deleteId = requestDto.getNoticeId();
         noticesRepository.deleteById(deleteId);
 
