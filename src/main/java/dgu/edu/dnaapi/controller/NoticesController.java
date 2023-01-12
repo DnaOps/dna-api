@@ -14,10 +14,11 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping(value = "/boards")
 public class NoticesController {
     private final NoticesService noticesService;
 
-    @PostMapping("/boards/notices")
+    @PostMapping("/notices")
     public ResponseEntity<Message> save(@RequestBody NoticesSaveRequestDto requestDto) {
         Long savedId = noticesService.save(requestDto);
         Message message = Message.builder()
@@ -28,7 +29,7 @@ public class NoticesController {
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
-    @PutMapping("/boards/notices")
+    @PutMapping("/notices")
     public ResponseEntity<Message> update(@RequestBody NoticesUpdateRequestDto requestDto) {
         Long updateId = noticesService.update(requestDto);
         Message message = Message.builder()
@@ -39,7 +40,7 @@ public class NoticesController {
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
-    @GetMapping("/boards/notices/{id}")
+    @GetMapping("/notices/{id}")
     public ResponseEntity<Message> findById(@PathVariable Long id) {
         NoticesResponseDto responseDto = noticesService.findById(id);
         Message message = Message.builder()
@@ -50,7 +51,7 @@ public class NoticesController {
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
-    @GetMapping("/boards/notices")
+    @GetMapping("/notices")
     public ResponseEntity<Message> findAll() {
         List<NoticesResponseDto> noticesList = noticesService.findAll();
         ListResponse listResponse = ListResponse.builder()
@@ -66,7 +67,7 @@ public class NoticesController {
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
-    @DeleteMapping("/boards/notices")
+    @DeleteMapping("/notices")
     public ResponseEntity<Message> delete(@RequestBody NoticesUpdateRequestDto requestDto) {
         Long deleteId = noticesService.delete(requestDto);
         Message message = Message.builder()
