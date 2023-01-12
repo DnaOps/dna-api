@@ -2,11 +2,10 @@ package dgu.edu.dnaapi.controller;
 
 import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.domain.User;
+import dgu.edu.dnaapi.domain.UserDto;
 import dgu.edu.dnaapi.domain.UserRole;
-import dgu.edu.dnaapi.domain.dto.LoginRequestDto;
-import dgu.edu.dnaapi.domain.dto.RefreshTokenDto;
-import dgu.edu.dnaapi.domain.dto.TokenDto;
-import dgu.edu.dnaapi.domain.dto.TokenResponse;
+import dgu.edu.dnaapi.domain.dto.*;
+import dgu.edu.dnaapi.domain.response.ApiStatus;
 import dgu.edu.dnaapi.domain.response.Message;
 import dgu.edu.dnaapi.domain.response.ResponseEntity;
 import dgu.edu.dnaapi.domain.response.StatusEnum;
@@ -39,11 +38,12 @@ public class AuthController {
 
     @PostMapping("/signUp")
     @ApiOperation(value = "회원가입", notes = "회원가입을 진행한다.")
-    public String signUp(@RequestBody User user) {
+    public ResponseEntity<Message> signUp(@RequestBody User user) {
         user.setRole(UserRole.USER_ROLE);
-        System.out.println("user = " + user);
-        userService.join(user);
-        return user.getUsername();
+        Long userId = userService.join(user);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        Message message = Message.builder().data(userId).apiStatus(new ApiStatus(StatusEnum.OK, null)).build();;
+        return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
     /**
@@ -69,11 +69,25 @@ public class AuthController {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtProperties.HEADER_STRING, "Bearer " + accessToken);
-        TokenResponse result = TokenResponse.builder()
+
+        TokenResponse tokenResponse = TokenResponse.builder()
                 .jwt(new TokenDto(accessToken, refreshToken))
                 .exist(false)
                 .build();
-        Message message = Message.builder().data(result).status(StatusEnum.OK).message(null).build();
+
+        // Todo : 게시글, 댓글 수 가져오기
+        UserDto userResponse = UserDto.builder().username(findUser.getUsername())
+                .createdDate(findUser.getCreatedDate())
+                .role(findUser.getRole())
+                .build();
+
+        LoginResponseDto result = new LoginResponseDto(tokenResponse, userResponse);
+
+        Message message = Message.builder()
+                                    .data(result)
+                                    .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                                    .build();
+
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
@@ -93,7 +107,7 @@ public class AuthController {
                 .jwt(new TokenDto(accessToken, refreshToken.getRefreshToken()))
                 .exist(false)
                 .build();
-        Message message = Message.builder().data(result).status(StatusEnum.OK).message(null).build();
+        Message message = Message.builder().data(result).apiStatus(new ApiStatus(StatusEnum.OK, null)).build();;
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
@@ -101,7 +115,7 @@ public class AuthController {
     @ApiOperation(value = "로그아웃", notes = "유저의 로그아웃을 진행한다.")
     public ResponseEntity<Message> logOut(@RequestBody RefreshTokenDto refreshToken) {
         // Todo : 1. accessToken 확인 2. RefreshToken 삭제 (userId 이용) 3. BlackList (유효기간동안 접근시)
-        Message message = Message.builder().data("LogoutTest").status(StatusEnum.OK).message(null).build();
+        Message message = Message.builder().data("LogoutTest").apiStatus(new ApiStatus(StatusEnum.OK, null)).build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
