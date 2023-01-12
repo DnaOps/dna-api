@@ -1,6 +1,7 @@
 package dgu.edu.dnaapi.domain.dto;
 
 import dgu.edu.dnaapi.domain.Notices;
+import dgu.edu.dnaapi.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +11,10 @@ import lombok.NoArgsConstructor;
 public class NoticesSaveRequestDto {
     private String title;
     private String content;
-    private String author;
+    private User author;
 
     @Builder
-    public NoticesSaveRequestDto(String title, String content, String author) {
+    public NoticesSaveRequestDto(String title, String content, User author) {
         this.title = title;
         this.content = content;
         this.author = author;

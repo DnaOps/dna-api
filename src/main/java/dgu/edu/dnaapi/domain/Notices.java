@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -20,11 +21,15 @@ public class Notices extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private String author;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId")
+    private User author;
+
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Comments> comments;
 
     @Builder
-    public Notices(String title, String content, String author) {
+    public Notices(String title, String content, User author) {
         this.title = title;
         this.content = content;
         this.author = author;
@@ -34,6 +39,8 @@ public class Notices extends BaseEntity {
         this.title = title;
         this.content = content;
     }
-
-
 }
+
+
+
+
