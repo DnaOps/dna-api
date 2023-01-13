@@ -42,4 +42,9 @@ public class UserService {
             return user;
         }
     }
+
+    public User getUserByEmail(String email){
+        return userRepository.findUserByEmail(email)
+                .orElseThrow(()-> new NoSuchElementException("해당 회원이 없습니다."));
+    }
 }

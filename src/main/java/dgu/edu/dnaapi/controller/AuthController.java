@@ -1,5 +1,6 @@
 package dgu.edu.dnaapi.controller;
 
+import dgu.edu.dnaapi.annotation.JwtRequired;
 import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.UserDto;
@@ -38,8 +39,11 @@ public class AuthController {
 
     @PostMapping("/signUp")
     @ApiOperation(value = "회원가입", notes = "회원가입을 진행한다.")
-    public ResponseEntity<Message> signUp(@RequestBody User user) {
+    public ResponseEntity<Message> signUp(@RequestBody SignUpDto signUpInfo) {
+        System.out.println("signUpInfo = " + signUpInfo);
+        User user = signUpInfo.toEntity();
         user.setRole(UserRole.USER_ROLE);
+        System.out.println("user = " + user);
         Long userId = userService.join(user);
         HttpHeaders httpHeaders = new HttpHeaders();
         Message message = Message.builder().data(userId).apiStatus(new ApiStatus(StatusEnum.OK, null)).build();;
@@ -76,7 +80,7 @@ public class AuthController {
                 .build();
 
         // Todo : 게시글, 댓글 수 가져오기
-        UserDto userResponse = UserDto.builder().username(findUser.getUsername())
+        UserDto userResponse = UserDto.builder().username(findUser.getUserName())
                 .createdDate(findUser.getCreatedDate())
                 .role(findUser.getRole())
                 .build();
