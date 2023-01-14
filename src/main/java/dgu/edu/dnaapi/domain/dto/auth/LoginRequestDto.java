@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.domain.dto;
+package dgu.edu.dnaapi.domain.dto.auth;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

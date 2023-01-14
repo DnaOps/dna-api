@@ -2,7 +2,10 @@ package dgu.edu.dnaapi.controller;
 
 import dgu.edu.dnaapi.annotation.JwtRequired;
 import dgu.edu.dnaapi.domain.User;
-import dgu.edu.dnaapi.domain.dto.*;
+import dgu.edu.dnaapi.domain.dto.notices.NoticesDeleteRequestDto;
+import dgu.edu.dnaapi.domain.dto.notices.NoticesResponseDto;
+import dgu.edu.dnaapi.domain.dto.notices.NoticesSaveRequestDto;
+import dgu.edu.dnaapi.domain.dto.notices.NoticesUpdateRequestDto;
 import dgu.edu.dnaapi.domain.response.*;
 import dgu.edu.dnaapi.service.NoticesService;
 import dgu.edu.dnaapi.service.UserService;
@@ -12,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @RestController

@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.domain.dto;
+package dgu.edu.dnaapi.domain.dto.notices;
 
 import lombok.Builder;
 import lombok.Getter;

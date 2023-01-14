@@ -1,11 +1,10 @@
 package dgu.edu.dnaapi.controller;
 
-import dgu.edu.dnaapi.annotation.JwtRequired;
 import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.UserDto;
 import dgu.edu.dnaapi.domain.UserRole;
-import dgu.edu.dnaapi.domain.dto.*;
+import dgu.edu.dnaapi.domain.dto.auth.*;
 import dgu.edu.dnaapi.domain.response.ApiStatus;
 import dgu.edu.dnaapi.domain.response.Message;
 import dgu.edu.dnaapi.domain.response.ResponseEntity;
@@ -20,9 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/auth/")

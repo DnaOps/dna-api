@@ -1,34 +1,22 @@
 package dgu.edu.dnaapi.config.oauth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dgu.edu.dnaapi.config.auth.PrincipalDetails;
 import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.UserRole;
-import dgu.edu.dnaapi.domain.dto.TokenDto;
-import dgu.edu.dnaapi.domain.dto.TokenResponse;
-import dgu.edu.dnaapi.domain.response.Message;
-import dgu.edu.dnaapi.domain.response.ResponseEntity;
-import dgu.edu.dnaapi.domain.response.StatusEnum;
-import dgu.edu.dnaapi.repository.refreshtoken.RefreshToken;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshTokenRepository;
 import dgu.edu.dnaapi.util.jwt.TokenProvider;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
 
 @Component
 @AllArgsConstructor
