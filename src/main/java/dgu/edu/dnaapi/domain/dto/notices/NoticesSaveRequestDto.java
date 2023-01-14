@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.domain.dto;
+package dgu.edu.dnaapi.domain.dto.notices;
 
 import dgu.edu.dnaapi.domain.Notices;
 import dgu.edu.dnaapi.domain.User;

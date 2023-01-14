@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.domain.dto;
+package dgu.edu.dnaapi.domain.dto.notices;
 
 import dgu.edu.dnaapi.domain.NoticeComments;
 import dgu.edu.dnaapi.domain.Notices;
@@ -19,6 +19,8 @@ public class NoticesResponseDto {
     private String author;
     private Long authorId;
     private int commentCount;
+    private int likeCount;
+    private int level;
     private String modifiedAt;
 
     public NoticesResponseDto(Notices entity) {
@@ -29,6 +31,8 @@ public class NoticesResponseDto {
         this.authorId = entity.getAuthor().getId();
         this.commentCount = entity.getComments().size();
         this.modifiedAt = entity.getLastModifiedDate().toString();
+        this.likeCount = entity.getLikeCount();
+        this.level = entity.getAuthor().getLevel();
     }
 
 }

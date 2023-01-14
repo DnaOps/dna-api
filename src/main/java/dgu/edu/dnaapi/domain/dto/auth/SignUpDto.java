@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.domain.dto;
+package dgu.edu.dnaapi.domain.dto.auth;
 
 import dgu.edu.dnaapi.domain.Notices;
 import dgu.edu.dnaapi.domain.User;
@@ -27,7 +27,7 @@ public class SignUpDto {
                 .userName(userName)
                 .email(email)
                 .password(password)
-                .level(studentId.substring(2,4))
+                .level(Integer.parseInt(studentId.substring(2,4)))
                 .build();
     }
 }

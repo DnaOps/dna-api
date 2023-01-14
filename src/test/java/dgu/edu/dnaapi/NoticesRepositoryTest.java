@@ -2,9 +2,9 @@ package dgu.edu.dnaapi;
 
 import dgu.edu.dnaapi.domain.Notices;
 
-import dgu.edu.dnaapi.domain.dto.NoticesDeleteRequestDto;
-import dgu.edu.dnaapi.domain.dto.NoticesSaveRequestDto;
-import dgu.edu.dnaapi.domain.dto.NoticesUpdateRequestDto;
+import dgu.edu.dnaapi.domain.dto.notices.NoticesDeleteRequestDto;
+import dgu.edu.dnaapi.domain.dto.notices.NoticesSaveRequestDto;
+import dgu.edu.dnaapi.domain.dto.notices.NoticesUpdateRequestDto;
 import dgu.edu.dnaapi.repository.NoticesRepository;
 import org.junit.After;
 import org.junit.Test;

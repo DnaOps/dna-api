@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.domain.dto;
+package dgu.edu.dnaapi.domain.dto.auth;
 
 import dgu.edu.dnaapi.domain.UserDto;
 import io.swagger.annotations.ApiModelProperty;

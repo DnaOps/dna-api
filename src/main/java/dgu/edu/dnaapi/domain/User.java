@@ -19,7 +19,7 @@ public class User extends BaseEntity{
     private String userName;
     private String password;
     private String email;
-    private String level;
+    private int level;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
@@ -28,7 +28,7 @@ public class User extends BaseEntity{
     private String providerId;
 
     @Builder
-    public User(Long id, String userName, String password, String email, String level, UserRole role, String provider, String providerId) {
+    public User(Long id, String userName, String password, String email, int level, UserRole role, String provider, String providerId) {
         this.id = id;
         this.userName = userName;
         this.password = password;

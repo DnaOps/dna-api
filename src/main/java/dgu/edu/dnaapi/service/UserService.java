@@ -2,7 +2,7 @@ package dgu.edu.dnaapi.service;
 
 import dgu.edu.dnaapi.config.CustomBCryptPasswordEncoder;
 import dgu.edu.dnaapi.domain.User;
-import dgu.edu.dnaapi.domain.dto.LoginRequestDto;
+import dgu.edu.dnaapi.domain.dto.auth.LoginRequestDto;
 import dgu.edu.dnaapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

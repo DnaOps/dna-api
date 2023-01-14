@@ -2,7 +2,10 @@ package dgu.edu.dnaapi.service;
 
 import dgu.edu.dnaapi.domain.NoticeComments;
 import dgu.edu.dnaapi.domain.Notices;
-import dgu.edu.dnaapi.domain.dto.*;
+import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsDeleteDto;
+import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsResponseDto;
+import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsSaveDto;
+import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsUpdateDto;
 import dgu.edu.dnaapi.repository.NoticesCommentsRepository;
 import dgu.edu.dnaapi.repository.NoticesRepository;
 import lombok.RequiredArgsConstructor;
