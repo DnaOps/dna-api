@@ -1,24 +1,33 @@
 package dgu.edu.dnaapi.controller;
 
+import dgu.edu.dnaapi.annotation.JwtRequired;
+import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.dto.*;
 import dgu.edu.dnaapi.domain.response.*;
 import dgu.edu.dnaapi.service.NoticesService;
+import dgu.edu.dnaapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/boards")
 public class NoticesController {
+
     private final NoticesService noticesService;
+    private final UserService userService;
 
     @PostMapping("/notices")
-    public ResponseEntity<Message> save(@RequestBody NoticesSaveRequestDto requestDto) {
-        Long savedId = noticesService.save(requestDto);
+    public ResponseEntity<Message> save(@JwtRequired User user,
+                                        @RequestBody NoticesSaveRequestDto requestDto) {
+
+        User findUser = userService.getUserByEmail(user.getEmail());
+        Long savedId = noticesService.save(requestDto.toEntity(findUser));
         Message message = Message.builder()
                 .data(savedId)
                 .apiStatus(new ApiStatus(StatusEnum.OK, null))
@@ -28,8 +37,9 @@ public class NoticesController {
     }
 
     @PutMapping("/notices")
-    public ResponseEntity<Message> update(@RequestBody NoticesUpdateRequestDto requestDto) {
-        Long updateId = noticesService.update(requestDto);
+    public ResponseEntity<Message> update(@JwtRequired User user,
+                                          @RequestBody NoticesUpdateRequestDto requestDto) {
+        Long updateId = noticesService.update(requestDto, user.getId());
         Message message = Message.builder()
                 .data(updateId)
                 .apiStatus(new ApiStatus(StatusEnum.OK, null))
@@ -56,7 +66,7 @@ public class NoticesController {
 
     @GetMapping("/notices/{id}")
     public ResponseEntity<Message> findById(@PathVariable Long id) {
-        NoticesResponseDto responseDto = noticesService.findById(id);
+        NoticesResponseDto responseDto = new NoticesResponseDto(noticesService.findById(id));
 
         Message message = Message.builder()
                 .data(responseDto)
@@ -68,8 +78,9 @@ public class NoticesController {
     }
 
     @DeleteMapping("/notices")
-    public ResponseEntity<Message> delete(@RequestBody NoticesDeleteRequestDto requestDto) {
-        Long deleteId = noticesService.delete(requestDto);
+    public ResponseEntity<Message> delete(@JwtRequired User user,
+                                          @RequestBody NoticesDeleteRequestDto requestDto) {
+        Long deleteId = noticesService.delete(requestDto, user.getId());
         Message message = Message.builder()
                 .data(deleteId)
                 .apiStatus(new ApiStatus(StatusEnum.OK, null))

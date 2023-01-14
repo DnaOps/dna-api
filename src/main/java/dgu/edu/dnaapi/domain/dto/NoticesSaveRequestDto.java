@@ -11,20 +11,18 @@ import lombok.NoArgsConstructor;
 public class NoticesSaveRequestDto {
     private String title;
     private String content;
-    private User author;
 
     @Builder
-    public NoticesSaveRequestDto(String title, String content, User author) {
+    public NoticesSaveRequestDto(String title, String content) {
         this.title = title;
         this.content = content;
-        this.author = author;
     }
 
-    public Notices toEntity() {
+    public Notices toEntity(User user) {
         return Notices.builder()
                 .title(title)
                 .content(content)
-                .author(author)
+                .author(user)
                 .build();
     }
 }
