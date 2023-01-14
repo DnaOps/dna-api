@@ -27,7 +27,7 @@ public class SignUpDto {
                 .userName(userName)
                 .email(email)
                 .password(password)
-                .level(studentId.substring(2,4))
+                .level(Integer.parseInt(studentId.substring(2,4)))
                 .build();
     }
 }
