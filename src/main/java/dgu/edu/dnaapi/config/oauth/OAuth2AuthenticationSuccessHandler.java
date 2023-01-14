@@ -100,7 +100,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 //        System.out.println("targetUrl = " + request.getRequestURL());
         PrincipalDetails principalDetails = (PrincipalDetails)authentication.getPrincipal();
         User oAuthUser = User.builder()
-                        .username(principalDetails.getUser().getUsername())
+                        .userName(principalDetails.getUser().getUserName())
                         .role(UserRole.USER_ROLE)
                         .build();
         String accessToken = tokenProvider.createToken(authentication);

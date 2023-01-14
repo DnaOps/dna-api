@@ -25,8 +25,8 @@ public class NoticesResponseDto {
         this.noticeId = entity.getNoticeId();
         this.title = entity.getTitle();
         this.content = entity.getContent();
-//        this.author = entity.getAuthor().getUsername();
-//        this.authorId = entity.getAuthor().getId();
+        this.author = entity.getAuthor().getUserName();
+        this.authorId = entity.getAuthor().getId();
         this.commentCount = entity.getComments().size();
         this.modifiedAt = entity.getLastModifiedDate().toString();
     }

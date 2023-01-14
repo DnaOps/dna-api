@@ -61,8 +61,9 @@ public class TokenProvider implements InitializingBean {
     public String createToken(User user, int expirationTime){
         return Jwts.builder()
                 .setSubject(user.getEmail())
-                .claim("uname", user.getUsername())
+                .claim("uname", user.getUserName())
                 .claim("role", user.getRole().toString())
+                .claim("id", user.getId())
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .compact();
@@ -76,7 +77,7 @@ public class TokenProvider implements InitializingBean {
                 .parseClaimsJws(token)
                 .getBody();
 
-        User user = userRepository.findByUsername(claims.get("username").toString());
+        User user = userRepository.findByUserName(claims.get("uname").toString());
         PrincipalDetails principalDetails = new PrincipalDetails(user);
         return new UsernamePasswordAuthenticationToken(principalDetails, token, principalDetails.getAuthorities());
     }
@@ -96,5 +97,16 @@ public class TokenProvider implements InitializingBean {
             LOGGER.info("JWT 토큰이 잘못되었습니다.");
         }
         return false;
+    }
+
+    /** Token Subject 추출 */
+    public String getTokenSubject(String token){
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
     }
 }

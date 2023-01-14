@@ -55,11 +55,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         String password = bCryptPasswordEncoder.encode("DNAProjectOAuth");
         String email = oAuth2UserInfo.getEmail();
 
-        User userEntity = userRepository.findByUsername(userName);
+        User userEntity = userRepository.findByUserName(userName);
 
         if (userEntity == null) {
             System.out.println("최초 로그인 입니다.");
-            userEntity = User.builder().username(userName).password(password)
+            userEntity = User.builder().userName(userName).password(password)
                     .email(email)
                     .role(UserRole.USER_ROLE)
                     .provider(provider)

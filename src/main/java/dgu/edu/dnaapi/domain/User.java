@@ -14,10 +14,12 @@ public class User extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "userId")
     private Long id;
-    private String username;
+    private String userName;
     private String password;
     private String email;
+    private String level;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
@@ -26,10 +28,12 @@ public class User extends BaseEntity{
     private String providerId;
 
     @Builder
-    public User(String username, String password, String email, UserRole role, String provider, String providerId) {
-        this.username = username;
+    public User(Long id, String userName, String password, String email, String level, UserRole role, String provider, String providerId) {
+        this.id = id;
+        this.userName = userName;
         this.password = password;
         this.email = email;
+        this.level = level;
         this.role = role;
         this.provider = provider;
         this.providerId = providerId;

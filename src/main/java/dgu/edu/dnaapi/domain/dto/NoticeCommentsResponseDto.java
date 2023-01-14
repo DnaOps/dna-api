@@ -24,7 +24,7 @@ public class NoticeCommentsResponseDto {
         // todo 나중에 user 매핑되도록 (or nullable -> Optional)
         User user = entity.getAuthor();
         if  (author != null) {
-            this.author = user.getUsername();
+            this.author = user.getUserName();
             this.authorId = user.getId();
         }
         // todo 나중에 Optional 처리?
