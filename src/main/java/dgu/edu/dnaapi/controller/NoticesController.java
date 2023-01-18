@@ -25,10 +25,9 @@ public class NoticesController {
     private final UserService userService;
 
     @PostMapping("/notices")
-    public ResponseEntity<Message> save(@JwtRequired User user,
+    public ResponseEntity<Message> save(@JwtRequired User findUser,
                                         @RequestBody NoticesSaveRequestDto requestDto) {
 
-        User findUser = userService.getUserByEmail(user.getEmail());
         Long savedId = noticesService.save(requestDto.toEntity(findUser));
         Message message = Message.builder()
                 .data(savedId)

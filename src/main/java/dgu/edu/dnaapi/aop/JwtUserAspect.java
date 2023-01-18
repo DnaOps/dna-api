@@ -27,21 +27,21 @@ public class JwtUserAspect {
 
         ServletRequestAttributes requestAttributes =
                 (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        HttpServletRequest request =requestAttributes.getRequest();
+        HttpServletRequest request = requestAttributes.getRequest();
 
         String token = request.getHeader("Authorization");
         String userEmail = tokenProvider.getTokenSubject(token.substring(7));
-        User user = userService.getUserByEmail(userEmail);
+        User findUser = userService.getUserByEmail(userEmail);
 
         Object[] args = Arrays.stream(joinPoint.getArgs()).map(data -> {
+            // todo: Object 지우기
             if(data instanceof User) {
-                data = user;
+                data = findUser;
             }
             return data;
         }).toArray();
 
         return joinPoint.proceed(args);
-
     }
 
 }
