@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 @Getter
 public class NoticesResponseDto {
-
     private Long noticeId;
     private String title;
     private String content;
@@ -34,5 +33,4 @@ public class NoticesResponseDto {
         this.likeCount = entity.getLikes().size();
         this.level = entity.getAuthor().getLevel();
     }
-
 }

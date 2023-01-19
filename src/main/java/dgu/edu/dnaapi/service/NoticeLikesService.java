@@ -27,4 +27,8 @@ public class NoticeLikesService {
         noticeLikesRepository.save(new NoticeLikes(notice, user));
         return "added";
     }
+
+    public boolean isNoticeLikedByUser(User user, Notices notice) {
+        return noticeLikesRepository.findByUserAndNotice(user, notice) != null;
+    }
 }
