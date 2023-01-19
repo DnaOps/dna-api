@@ -33,6 +33,7 @@ public class NoticeLikesController {
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
+    // todo 자기가 쓴 글은 좋아요 못하도록
     @PostMapping("/likes/notices/{noticeId}")
     public ResponseEntity<Message> toggleLike(@JwtRequired User user, @PathVariable Long noticeId) {
         String result = noticeLikesService.toggleLike(user, noticeId);

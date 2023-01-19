@@ -17,18 +17,20 @@ public class NoticeCommentsResponseDto {
     private Long parentId;
     private String modifiedAt;
     private ListResponse childrenComments;
+    private int level;
+    private int likeCount;
 
     public NoticeCommentsResponseDto(NoticeComments entity) {
         this.commentId = entity.getCommentId();
         this.content = entity.getContent();
-        // todo 나중에 user 매핑되도록 (or nullable -> Optional)
+
         User author = entity.getAuthor();
         if  (author != null) {
             this.author = author.getUserName();
             this.authorId = author.getId();
         }
-        // todo 나중에 Optional 처리?
-        NoticeComments parent = entity.getParent();
+        NoticeComments parent = entity.getParent(); // todo 나중에 Optional 처리?
+
         if (parent != null)
             this.parentId = parent.getCommentId();
 
@@ -42,6 +44,7 @@ public class NoticeCommentsResponseDto {
                     .totalCount(children.size())
                     .build();
         }
-
+        this.likeCount = 0; // todo comment like
+        this.level = entity.getAuthor().getLevel();
     }
 }
