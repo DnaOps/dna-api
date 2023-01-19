@@ -6,7 +6,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @NoArgsConstructor
@@ -27,18 +30,18 @@ public class Notices extends BaseEntity {
     private User author;
 
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<NoticeComments> comments;
+    private List<NoticeComments> comments = new ArrayList<>();
 
-    private int likeCount;
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL)
+    Set<NoticeLikes> likes = new HashSet<>();
 
     @Builder
-    public Notices(Long noticeId, String title, String content, User author, List<NoticeComments> comments, int likeCount) {
+    public Notices(Long noticeId, String title, String content, User author, List<NoticeComments> comments) {
         this.noticeId = noticeId;
         this.title = title;
         this.content = content;
         this.author = author;
         this.comments = comments;
-        this.likeCount = likeCount;
     }
 
     public void update(String title, String content) {

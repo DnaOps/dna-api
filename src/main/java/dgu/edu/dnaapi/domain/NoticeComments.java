@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -26,7 +27,7 @@ public class NoticeComments extends BaseEntity {
     private Long parentCommentId;
 
     @OneToMany(mappedBy = "parent")
-    private List<NoticeComments> childList;
+    private List<NoticeComments> childList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "noticeId", nullable = false)

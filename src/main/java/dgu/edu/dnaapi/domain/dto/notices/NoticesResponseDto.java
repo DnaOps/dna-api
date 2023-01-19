@@ -31,7 +31,7 @@ public class NoticesResponseDto {
         this.authorId = entity.getAuthor().getId();
         this.commentCount = entity.getComments().size();
         this.modifiedAt = entity.getLastModifiedDate().toString();
-        this.likeCount = entity.getLikeCount();
+        this.likeCount = entity.getLikes().size();
         this.level = entity.getAuthor().getLevel();
     }
 
