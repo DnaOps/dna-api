@@ -33,15 +33,13 @@ public class NoticeComments extends BaseEntity {
     private Notices notice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", nullable = true) // todo: 고민 nullable true or false?
+    @JoinColumn(name = "userId") // todo: 고민 nullable true or false?
     private User author;
-
-    private String username;
 
     private int likeCount;
 
     @Builder
-    public NoticeComments(Notices notice, Long noticeId, User author, String content, NoticeComments parent, Long parentCommentId, int likeCount) {
+    public NoticeComments(Notices notice, User author, String content, NoticeComments parent, Long parentCommentId, int likeCount) {
         this.notice = notice;
         this.author = author;
         this.content = content;
@@ -60,10 +58,14 @@ public class NoticeComments extends BaseEntity {
 
     public void registerNotice(Notices notice) {
         this.notice = notice;
+        notice.getComments().add(this);
     }
     public void registerParent(NoticeComments parent) {
         this.parent = parent;
+        parent.addChild(this);
     }
 
-
+    public void registerAuthor(User user) {
+        this.author = user;
+    }
 }

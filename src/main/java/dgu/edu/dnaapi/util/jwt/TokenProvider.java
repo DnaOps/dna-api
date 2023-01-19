@@ -69,15 +69,22 @@ public class TokenProvider implements InitializingBean {
                 .compact();
     }
 
-    /**인증 정보 조회 */
-    public Authentication getAuthentication(String token) {
+    private Claims parseClaimsFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+        return claims;
+    }
 
-        User user = userRepository.findByUserName(claims.get("uname").toString());
+    /**인증 정보 조회 */
+    public Authentication getAuthentication(String token) {
+        Claims claims = parseClaimsFromToken(token);
+
+        Long userId = Long.parseLong(claims.get("id").toString());
+        User user = userRepository.findById(userId).orElseThrow();
+
         PrincipalDetails principalDetails = new PrincipalDetails(user);
         return new UsernamePasswordAuthenticationToken(principalDetails, token, principalDetails.getAuthorities());
     }
@@ -101,12 +108,13 @@ public class TokenProvider implements InitializingBean {
 
     /** Token Subject 추출 */
     public String getTokenSubject(String token){
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims claims = parseClaimsFromToken(token);
 
         return claims.getSubject();
+    }
+
+    public Long getUserIdFromClaims(String token) {
+        Claims claims = parseClaimsFromToken(token);
+        return Long.parseLong(claims.get("id").toString());
     }
 }

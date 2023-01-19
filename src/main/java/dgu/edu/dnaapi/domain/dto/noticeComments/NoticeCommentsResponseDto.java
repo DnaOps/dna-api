@@ -22,10 +22,10 @@ public class NoticeCommentsResponseDto {
         this.commentId = entity.getCommentId();
         this.content = entity.getContent();
         // todo 나중에 user 매핑되도록 (or nullable -> Optional)
-        User user = entity.getAuthor();
+        User author = entity.getAuthor();
         if  (author != null) {
-            this.author = user.getUserName();
-            this.authorId = user.getId();
+            this.author = author.getUserName();
+            this.authorId = author.getId();
         }
         // todo 나중에 Optional 처리?
         NoticeComments parent = entity.getParent();
