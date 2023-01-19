@@ -28,6 +28,7 @@ public class NoticeCommentsResponseDto {
         if  (author != null) {
             this.author = author.getUserName();
             this.authorId = author.getId();
+            this.level = author.getLevel();
         }
         NoticeComments parent = entity.getParent(); // todo 나중에 Optional 처리?
 
@@ -45,6 +46,5 @@ public class NoticeCommentsResponseDto {
                     .build();
         }
         this.likeCount = 0; // todo comment like
-        this.level = entity.getAuthor().getLevel();
     }
 }
