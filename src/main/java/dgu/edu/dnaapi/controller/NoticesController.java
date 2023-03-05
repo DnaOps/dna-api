@@ -31,7 +31,7 @@ public class NoticesController {
         Long savedId = noticesService.save(requestDto.toEntity(findUser));
         Message message = Message.builder()
                 .data(savedId)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -43,7 +43,7 @@ public class NoticesController {
         Long updateId = noticesService.update(requestDto, user.getId());
         Message message = Message.builder()
                 .data(updateId)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -59,7 +59,7 @@ public class NoticesController {
 
         Message message = Message.builder()
                 .data(listResponse)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -71,7 +71,7 @@ public class NoticesController {
 
         Message message = Message.builder()
                 .data(responseDto)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -84,7 +84,7 @@ public class NoticesController {
         Long deleteId = noticesService.delete(requestDto, user.getId());
         Message message = Message.builder()
                 .data(deleteId)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);

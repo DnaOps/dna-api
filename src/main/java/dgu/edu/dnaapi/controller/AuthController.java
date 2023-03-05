@@ -5,10 +5,7 @@ import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.UserDto;
 import dgu.edu.dnaapi.domain.UserRole;
 import dgu.edu.dnaapi.domain.dto.auth.*;
-import dgu.edu.dnaapi.domain.response.ApiStatus;
-import dgu.edu.dnaapi.domain.response.Message;
-import dgu.edu.dnaapi.domain.response.ResponseEntity;
-import dgu.edu.dnaapi.domain.response.StatusEnum;
+import dgu.edu.dnaapi.domain.response.*;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshToken;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshTokenRepository;
 import dgu.edu.dnaapi.service.TokenService;
@@ -42,7 +39,7 @@ public class AuthController {
         System.out.println("user = " + user);
         Long userId = userService.join(user);
         HttpHeaders httpHeaders = new HttpHeaders();
-        Message message = Message.builder().data(userId).apiStatus(new ApiStatus(StatusEnum.OK, null)).build();;
+        Message message = Message.builder().data(userId).apiStatus(new ApiStatus(DnaStatusCode.OK, null)).build();;
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
@@ -85,7 +82,7 @@ public class AuthController {
 
         Message message = Message.builder()
                                     .data(result)
-                                    .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                                    .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                                     .build();
 
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -107,7 +104,7 @@ public class AuthController {
                 .jwt(new TokenDto(accessToken, refreshToken.getRefreshToken()))
                 .exist(false)
                 .build();
-        Message message = Message.builder().data(result).apiStatus(new ApiStatus(StatusEnum.OK, null)).build();;
+        Message message = Message.builder().data(result).apiStatus(new ApiStatus(DnaStatusCode.OK, null)).build();;
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
@@ -115,7 +112,7 @@ public class AuthController {
     @ApiOperation(value = "로그아웃", notes = "유저의 로그아웃을 진행한다.")
     public ResponseEntity<Message> logOut(@RequestBody RefreshTokenDto refreshToken) {
         // Todo : 1. accessToken 확인 2. RefreshToken 삭제 (userId 이용) 3. BlackList (유효기간동안 접근시)
-        Message message = Message.builder().data("LogoutTest").apiStatus(new ApiStatus(StatusEnum.OK, null)).build();
+        Message message = Message.builder().data("LogoutTest").apiStatus(new ApiStatus(DnaStatusCode.OK, null)).build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }

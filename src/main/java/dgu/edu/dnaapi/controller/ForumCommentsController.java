@@ -28,7 +28,7 @@ public class ForumCommentsController {
         Long savedId = forumCommentsService.save(findUser, requestDto);
         Message message = Message.builder()
                 .data(savedId)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -45,7 +45,7 @@ public class ForumCommentsController {
 
         Message message = Message.builder()
                 .data(listResponse)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -58,7 +58,7 @@ public class ForumCommentsController {
         Long deleteId = forumCommentsService.delete(findUser.getId(), id);
         Message message = Message.builder()
                 .data(deleteId)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -71,7 +71,7 @@ public class ForumCommentsController {
         Long updateId = forumCommentsService.update(findUser.getId(), requestDto, id);
         Message message = Message.builder()
                 .data(updateId)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);

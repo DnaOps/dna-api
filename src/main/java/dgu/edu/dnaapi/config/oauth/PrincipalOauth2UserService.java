@@ -7,6 +7,8 @@ import dgu.edu.dnaapi.config.oauth.provider.NaverUserInfo;
 import dgu.edu.dnaapi.config.oauth.provider.OAuth2UserInfo;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.UserRole;
+import dgu.edu.dnaapi.domain.response.DnaStatusCode;
+import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -47,6 +49,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         }else{
             System.out.println("우리는 구글, 네이버만 지원해요");
             // Todo : 예외처리
+            throw new DNACustomException("INVALID OAUTH", DnaStatusCode.INVALID_OAUTH_INFO);
         }
 
         String provider = oAuth2UserInfo.getProvider();

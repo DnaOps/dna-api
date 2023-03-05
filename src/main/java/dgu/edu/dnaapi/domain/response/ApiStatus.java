@@ -10,13 +10,14 @@ import lombok.Setter;
 public class ApiStatus {
 
     @ApiModelProperty(example = "DNA 응답 상태코드")
-    private StatusEnum errorCode;
+    private DnaStatusCode errorCode;
 
     @ApiModelProperty(example = "오류 메시지")
     private String errorMessage;
 
-    public ApiStatus(StatusEnum errorCode, String errorMessage) {
+    public ApiStatus(DnaStatusCode errorCode, String errorMessage) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }
+
 }

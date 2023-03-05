@@ -3,10 +3,7 @@ package dgu.edu.dnaapi.controller;
 import dgu.edu.dnaapi.annotation.JwtRequired;
 import dgu.edu.dnaapi.domain.Notices;
 import dgu.edu.dnaapi.domain.User;
-import dgu.edu.dnaapi.domain.response.ApiStatus;
-import dgu.edu.dnaapi.domain.response.Message;
-import dgu.edu.dnaapi.domain.response.ResponseEntity;
-import dgu.edu.dnaapi.domain.response.StatusEnum;
+import dgu.edu.dnaapi.domain.response.*;
 import dgu.edu.dnaapi.service.NoticeLikesService;
 import dgu.edu.dnaapi.service.NoticesService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +24,7 @@ public class NoticeLikesController {
 
         Message message = Message.builder()
                 .data(isLiked)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -40,7 +37,7 @@ public class NoticeLikesController {
 
         Message message = Message.builder()
                 .data(result)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
