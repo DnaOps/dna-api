@@ -10,13 +10,17 @@ import lombok.Setter;
 public class ApiStatus {
 
     @ApiModelProperty(example = "DNA 응답 상태코드")
-    private DnaStatusCode errorCode;
+    private String errorCode;
+
+    @ApiModelProperty(example = "DNA 응답 에러메시지")
+    private String errorCodeMessage;
 
     @ApiModelProperty(example = "오류 메시지")
     private String errorMessage;
 
     public ApiStatus(DnaStatusCode errorCode, String errorMessage) {
-        this.errorCode = errorCode;
+        this.errorCode = errorCode.getCode();
+        this.errorCodeMessage = errorCode.getErrorMessage();
         this.errorMessage = errorMessage;
     }
 

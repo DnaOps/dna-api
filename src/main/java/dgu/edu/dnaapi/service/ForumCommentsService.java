@@ -4,6 +4,8 @@ import dgu.edu.dnaapi.domain.*;
 import dgu.edu.dnaapi.domain.dto.comments.CommentsSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.comments.CommentsUpdateRequestDto;
 import dgu.edu.dnaapi.domain.dto.forumComments.ForumCommentsResponseDto;
+import dgu.edu.dnaapi.domain.response.DnaStatusCode;
+import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.forum.ForumCommentsRepository;
 import dgu.edu.dnaapi.repository.forum.ForumsRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +29,13 @@ public class ForumCommentsService {
         Long forumId = requestDto.getPostId();
 
         Forums forum = forumsRepository.findById(forumId).orElseThrow(
-                () -> new IllegalArgumentException("해당 글이 없습니다. id=" + forumId));
+                () -> new DNACustomException("해당 글이 없습니다. id=" + forumId, DnaStatusCode.INVALID_POST));
         comment.registerForum(forum);
 
         if(requestDto.getParentCommentId() != null) {
             Long parentCommentId = requestDto.getParentCommentId();
             ForumComments parent = forumCommentsRepository.findById(parentCommentId).orElseThrow(
-                    () -> new IllegalArgumentException("해당 댓글이 없습니다. id=" + parentCommentId));
+                    () -> new DNACustomException("해당 댓글이 없습니다. id=" + parentCommentId, DnaStatusCode.INVALID_COMMENT));
             comment.registerParent(parent);
         }
 
@@ -43,10 +45,10 @@ public class ForumCommentsService {
     @Transactional
     public Long update(Long userId, CommentsUpdateRequestDto requestDto, Long forumCommentId) {
         ForumComments comment = forumCommentsRepository.findById(forumCommentId).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 없습니다. id=" + forumCommentId));
+                () -> new DNACustomException("해당 댓글이 없습니다. id=" + forumCommentId, DnaStatusCode.INVALID_COMMENT));
 
         if(!comment.getAuthor().getId().equals(userId)) {
-            throw new IllegalArgumentException("작성자만 댓글을 수정할 수 있습니다.");
+            throw new DNACustomException("작성자만 댓글을 수정할 수 있습니다.", DnaStatusCode.INVALID_AUTHOR);
         }
         comment.update(requestDto.getContent());
         return comment.getCommentId();
@@ -56,10 +58,10 @@ public class ForumCommentsService {
     public Long delete(Long userId, Long deleteForumCommentId) {
         // todo 나중에 대댓글 삭제 조건 처리 등 추가 해야함
         ForumComments comment = forumCommentsRepository.findById(deleteForumCommentId).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 없습니다. id=" + deleteForumCommentId));
+                () -> new DNACustomException("해당 댓글이 없습니다. id=" + deleteForumCommentId, DnaStatusCode.INVALID_COMMENT));
 
         if(!comment.getAuthor().getId().equals(userId)) {
-            throw new IllegalArgumentException("작성자만 댓글을 삭제할 수 있습니다.");
+            throw new DNACustomException("작성자만 댓글을 삭제할 수 있습니다.", DnaStatusCode.INVALID_AUTHOR);
         }
         forumCommentsRepository.deleteById(deleteForumCommentId);
         return deleteForumCommentId;

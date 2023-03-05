@@ -2,6 +2,8 @@ package dgu.edu.dnaapi.service;
 
 import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.domain.User;
+import dgu.edu.dnaapi.domain.response.DnaStatusCode;
+import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.UserRepository;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshToken;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshTokenRepository;
@@ -33,12 +35,12 @@ public class TokenService {
 
     public String generateAccessToken(final String requestRefreshToken) {
         RefreshToken refreshToken = refreshTokenRepository.findById(requestRefreshToken)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(()->new DNACustomException("INVALID RefreshToken", DnaStatusCode.REFRESH_TOKEN_INVALID));
         System.out.println("refreshToken2 = " + refreshToken);
         // Todo : RefreshToken Exception
         Long memberId = refreshToken.getUserId();
         User findUser = userRepository.findById(memberId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(()-> new DNACustomException("INVALID User", DnaStatusCode.INVALID_USER));
 
         System.out.println("findUser = " + findUser);
 
@@ -58,7 +60,7 @@ public class TokenService {
             return Long.parseLong(memberId);
         } catch (final JwtException e) {
             // Todo : InvalidAccessTokenException 만들기
-            throw new IllegalArgumentException();
+            throw new DNACustomException("InvalidAccessTokenException", DnaStatusCode.TOKEN_INVALID);
         }
     }
 
