@@ -28,7 +28,7 @@ public class NoticeCommentsController {
         Long savedId = noticeCommentsService.save(findUser, requestDto);
         Message message = Message.builder()
                 .data(savedId)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -45,7 +45,7 @@ public class NoticeCommentsController {
 
         Message message = Message.builder()
                 .data(listResponse)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -58,7 +58,7 @@ public class NoticeCommentsController {
         Long deleteId = noticeCommentsService.delete(findUser.getId(), requestDto);
         Message message = Message.builder()
                 .data(deleteId)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
@@ -70,7 +70,7 @@ public class NoticeCommentsController {
         Long updateId = noticeCommentsService.update(findUser.getId(), requestDto);
         Message message = Message.builder()
                 .data(updateId)
-                .apiStatus(new ApiStatus(StatusEnum.OK, null))
+                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
                 .build();
         HttpHeaders httpHeaders = new HttpHeaders();
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);

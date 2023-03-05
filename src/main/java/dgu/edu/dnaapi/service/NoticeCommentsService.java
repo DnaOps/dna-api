@@ -7,6 +7,8 @@ import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsDeleteDto;
 import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsResponseDto;
 import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsSaveDto;
 import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsUpdateDto;
+import dgu.edu.dnaapi.domain.response.DnaStatusCode;
+import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.NoticesCommentsRepository;
 import dgu.edu.dnaapi.repository.NoticesRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +32,13 @@ public class NoticeCommentsService {
         Long noticeId = requestDto.getNoticeId();
 
         Notices notice = noticesRepository.findById(noticeId).orElseThrow(
-                () -> new IllegalArgumentException("해당 글이 없습니다. id=" + noticeId));
+                () -> new DNACustomException("해당 글이 없습니다. id=" + noticeId, DnaStatusCode.INVALID_POST));
         comment.registerNotice(notice);
 
         if(requestDto.getParentCommentId() != null) {
             Long parentCommentId = requestDto.getParentCommentId();
             NoticeComments parent = noticesCommentsRepository.findById(parentCommentId).orElseThrow(
-                    () -> new IllegalArgumentException("해당 댓글이 없습니다. id=" + parentCommentId));
+                    () -> new DNACustomException("해당 댓글이 없습니다. id=" + parentCommentId, DnaStatusCode.INVALID_COMMENT));
             comment.registerParent(parent);
         }
 
@@ -47,10 +49,10 @@ public class NoticeCommentsService {
     public Long update(Long userId, NoticeCommentsUpdateDto requestDto) {
         Long id = requestDto.getCommentId();
         NoticeComments comment = noticesCommentsRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 없습니다. id=" + id));
+                () -> new DNACustomException("해당 댓글이 없습니다. id=" + id, DnaStatusCode.INVALID_COMMENT));
 
         if(!comment.getAuthor().getId().equals(userId)) {
-            throw new IllegalArgumentException("작성자만 댓글을 수정할 수 있습니다.");
+            throw new DNACustomException("작성자만 댓글을 수정할 수 있습니다.", DnaStatusCode.INVALID_AUTHOR);
         }
         comment.update(requestDto.getContent());
         return id;
@@ -58,7 +60,7 @@ public class NoticeCommentsService {
 
     public NoticeCommentsResponseDto findById(Long id) {
         NoticeComments entity = noticesCommentsRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 없습니다. id=" + id));
+                () -> new DNACustomException("해당 댓글이 없습니다. id=" + id, DnaStatusCode.INVALID_COMMENT));
         return new NoticeCommentsResponseDto(entity);
     }
 
@@ -67,9 +69,9 @@ public class NoticeCommentsService {
         // todo 나중에 대댓글 삭제 조건 처리 등 추가 해야함
         Long deleteId = requestDto.getCommentId();
         NoticeComments comment = noticesCommentsRepository.findById(deleteId).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 없습니다. id=" + deleteId));
+                () -> new DNACustomException("해당 댓글이 없습니다. id=" + deleteId, DnaStatusCode.INVALID_COMMENT));
         if(!comment.getAuthor().getId().equals(userId)) {
-            throw new IllegalArgumentException("작성자만 댓글을 삭제할 수 있습니다.");
+            throw new DNACustomException("작성자만 댓글을 삭제할 수 있습니다.", DnaStatusCode.INVALID_AUTHOR);
         }
         noticesCommentsRepository.deleteById(deleteId);
         return deleteId;

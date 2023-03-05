@@ -3,6 +3,8 @@ package dgu.edu.dnaapi.util.jwt;
 import dgu.edu.dnaapi.config.auth.PrincipalDetails;
 import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.domain.User;
+import dgu.edu.dnaapi.domain.response.DnaStatusCode;
+import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

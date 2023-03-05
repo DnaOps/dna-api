@@ -3,6 +3,8 @@ package dgu.edu.dnaapi.service;
 import dgu.edu.dnaapi.domain.Forums;
 import dgu.edu.dnaapi.domain.dto.forum.ForumSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.forum.ForumsMetaDataResponseDto;
+import dgu.edu.dnaapi.domain.response.DnaStatusCode;
+import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.forum.ForumsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,10 +28,10 @@ public class ForumsService {
     public Long update(ForumSaveRequestDto requestDto, Long userId, Long forumId) {
 
         Forums forum = forumsRepository.findById(forumId).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + forumId));
+                () -> new DNACustomException("해당 게시글이 없습니다. id=" + forumId, DnaStatusCode.INVALID_POST));
         // 게시글의 Author 만 게시글을 변경할 수 있도록 검사
         if (userId != forum.getAuthor().getId()){
-            throw new IllegalArgumentException("게시글의 작성자만 수정할 수 있습니다.");
+            throw new DNACustomException("게시글의 작성자만 수정할 수 있습니다.", DnaStatusCode.INVALID_AUTHOR);
         }
         forum.update(requestDto.getTitle(), requestDto.getContent());
         return forum.getForumId();
@@ -37,15 +39,15 @@ public class ForumsService {
 
     public Forums findById(Long id) {
         return forumsRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+                () -> new DNACustomException("해당 게시글이 없습니다. id=" + id, DnaStatusCode.INVALID_POST));
     }
 
     @Transactional
     public Long delete(Long deleteForumId, Long userId) {
         Forums entity = forumsRepository.findById(deleteForumId).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + deleteForumId));
+                () -> new DNACustomException("해당 게시글이 없습니다. id=" + deleteForumId, DnaStatusCode.INVALID_POST));
         if(entity.getAuthor().getId() != userId) {
-            throw new IllegalArgumentException("해당 게시글의 작성자만 게시글을 삭제할 수 있습니다.");
+            throw new DNACustomException("해당 게시글의 작성자만 게시글을 삭제할 수 있습니다.", DnaStatusCode.INVALID_AUTHOR);
         }
         forumsRepository.deleteById(deleteForumId);
         return deleteForumId;

@@ -16,7 +16,7 @@ public class Message {
     private Object data;
 
     public Message() {
-        this.apiStatus = new ApiStatus(StatusEnum.BAD_REQUEST, "");
+        this.apiStatus = new ApiStatus(DnaStatusCode.BAD_REQUEST, "");
         this.data = null;
     }
 
