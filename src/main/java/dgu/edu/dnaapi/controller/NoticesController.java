@@ -1,20 +1,30 @@
 package dgu.edu.dnaapi.controller;
 
 import dgu.edu.dnaapi.annotation.JwtRequired;
+import dgu.edu.dnaapi.domain.BoardSearchCriteria;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.dto.notices.NoticesDeleteRequestDto;
 import dgu.edu.dnaapi.domain.dto.notices.NoticesResponseDto;
 import dgu.edu.dnaapi.domain.dto.notices.NoticesSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.notices.NoticesUpdateRequestDto;
 import dgu.edu.dnaapi.domain.response.*;
+import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.service.NoticesService;
 import dgu.edu.dnaapi.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static dgu.edu.dnaapi.domain.response.DnaStatusCode.INVALID_SEARCH_OPTION;
 
 @RequiredArgsConstructor
 @RestController
@@ -49,13 +59,29 @@ public class NoticesController {
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
+    /**
+     * start 조회 시작 지점
+     *
+     */
     @GetMapping("/notices")
-    public ResponseEntity<Message> findAll() {
-        List<NoticesResponseDto> noticesList = noticesService.findAll();
-        ListResponse listResponse = ListResponse.builder()
-                .list(noticesList)
-                .totalCount(noticesList.size())
-                .build();
+    public ResponseEntity<Message> findAll(@RequestParam(value = "start", defaultValue = "0") long idx,
+                                           @RequestParam(value = "criteria", required = false) BoardSearchCriteria criteria,
+                                           @RequestParam(value = "keyword", required = false) String keyword,
+                                           @PageableDefault(size = 13, sort = "noticeId", direction = Sort.Direction.DESC) Pageable pageable) {
+        System.out.println("idx = " + idx);
+        System.out.println("pageable = " + pageable);
+        System.out.println("criteria = " + criteria);
+        System.out.println("keyword = " + keyword);
+
+        ListResponse listResponse;
+
+        if(criteria != null && keyword != null){
+            listResponse = noticesService.getAllNoticesByCriteria(idx, criteria, keyword, pageable);
+        }else if ( criteria == null && keyword == null){
+            listResponse = noticesService.getAllNotices(idx, pageable);
+        }else {
+            throw new DNACustomException("Invalid Search Options", INVALID_SEARCH_OPTION);
+        }
 
         Message message = Message.builder()
                 .data(listResponse)
