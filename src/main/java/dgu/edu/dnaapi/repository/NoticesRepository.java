@@ -1,11 +1,13 @@
 package dgu.edu.dnaapi.repository;
 
 import dgu.edu.dnaapi.domain.Notices;
+import io.swagger.models.auth.In;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -68,4 +70,20 @@ public interface NoticesRepository extends JpaRepository<Notices, Long> {
             "or n.content LIKE %:keyword%) " +
             "ORDER BY n.noticeId desc")
     Slice<Notices> findAllByTitleContainingOrContentContaining(@Param("start") Long start, @Param("keyword")String keyword, Pageable pageable);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Notices n set n.likeCount = n.likeCount + 1 where n.noticeId = :noticeId")
+    int increaseLikeCount(@Param("noticeId")Long noticeId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Notices n set n.likeCount = n.likeCount - 1 where n.noticeId = :noticeId")
+    int decreaseLikeCount(@Param("noticeId")Long noticeId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Notices n set n.commentCount = n.commentCount + 1 where n.noticeId = :noticeId")
+    int increaseCommentCount(@Param("noticeId")Long noticeId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Notices n set n.commentCount = n.commentCount - 1 where n.noticeId = :noticeId")
+    int decreaseCommentCount(@Param("noticeId")Long noticeId);
 }

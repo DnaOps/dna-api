@@ -21,9 +21,12 @@ public class NoticeLikesService {
         NoticeLikes likes = noticeLikesRepository.findByUserAndNotice(user, notice);
 
         if(likes != null) {
+            noticesRepository.decreaseLikeCount(notice.getNoticeId());
             noticeLikesRepository.delete(likes);
             return "deleted";
         }
+
+        noticesRepository.increaseLikeCount(notice.getNoticeId());
         noticeLikesRepository.save(new NoticeLikes(notice, user));
         return "added";
     }
