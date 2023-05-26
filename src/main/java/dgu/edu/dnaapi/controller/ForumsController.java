@@ -26,12 +26,8 @@ public class ForumsController {
                                         @RequestBody ForumSaveRequestDto requestDto) {
 
         Long savedId = forumsService.save(requestDto.toEntity(findUser));
-        Message message = Message.builder()
-                .data(savedId)
-                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
-                .build();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
+        Message message = Message.createSuccessMessage(savedId);
+        return new ResponseEntity(message, new HttpHeaders(), HttpStatus.OK);
     }
 
     @PutMapping("/forums/{id}")
@@ -39,12 +35,8 @@ public class ForumsController {
                                           @JwtRequired User user,
                                           @RequestBody ForumSaveRequestDto requestDto) {
         Long updateId = forumsService.update(requestDto, user.getId(), id);
-        Message message = Message.builder()
-                .data(updateId)
-                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
-                .build();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
+        Message message = Message.createSuccessMessage(updateId);
+        return new ResponseEntity(message, new HttpHeaders(), HttpStatus.OK);
     }
 
     @GetMapping("/forums")
@@ -55,35 +47,22 @@ public class ForumsController {
                 .totalCount(noticesList.size())
                 .build();
 
-        Message message = Message.builder()
-                .data(listResponse)
-                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
-                .build();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
+        Message message = Message.createSuccessMessage(listResponse);
+        return new ResponseEntity(message, new HttpHeaders(), HttpStatus.OK);
     }
 
     @GetMapping("/forums/{id}")
     public ResponseEntity<Message> findById(@PathVariable Long id) {
         ForumsResponseDto responseDto = new ForumsResponseDto(forumsService.findById(id));
-        Message message = Message.builder()
-                .data(responseDto)
-                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
-                .build();
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
+        Message message = Message.createSuccessMessage(responseDto);
+        return new ResponseEntity(message, new HttpHeaders(), HttpStatus.OK);
     }
 
     @DeleteMapping("/forums/{id}")
     public ResponseEntity<Message> delete(@JwtRequired User user,
                                           @PathVariable Long id) {
         Long deleteId = forumsService.delete(id, user.getId());
-        Message message = Message.builder()
-                .data(deleteId)
-                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
-                .build();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
+        Message message = Message.createSuccessMessage(deleteId);
+        return new ResponseEntity(message, new HttpHeaders(), HttpStatus.OK);
     }
 }
