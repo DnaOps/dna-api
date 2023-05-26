@@ -14,6 +14,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @Entity
+@Builder
 public class Notices extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,15 +34,26 @@ public class Notices extends BaseEntity {
     private List<NoticeComments> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL)
-    Set<NoticeLikes> likes = new HashSet<>();
+    private Set<NoticeLikes> likes = new HashSet<>();
 
-    @Builder
-    public Notices(Long noticeId, String title, String content, User author, List<NoticeComments> comments) {
+    @Column(columnDefinition = "int default 0", nullable = false)
+    @Builder.Default
+    private int likeCount = 0;
+
+    @Column(columnDefinition = "int default 0", nullable = false)
+    @Builder.Default
+    private int commentCount = 0;
+
+    public Notices(Long noticeId, String title, String content, User author, List<NoticeComments> comments,
+                                                    Set<NoticeLikes> likes, int likeCount, int commentCount) {
         this.noticeId = noticeId;
         this.title = title;
         this.content = content;
         this.author = author;
         this.comments = comments;
+        this.likes = likes;
+        this.likeCount = likeCount;
+        this.commentCount = commentCount;
     }
 
     public void update(String title, String content) {
