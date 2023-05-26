@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ForumsRepository extends JpaRepository<Forums, Long> {
+public interface ForumsRepository extends JpaRepository<Forums, Long>, ForumsRepositoryCustom {
 
     @Override
     @EntityGraph(attributePaths = {"author"}, type = EntityGraph.EntityGraphType.FETCH)

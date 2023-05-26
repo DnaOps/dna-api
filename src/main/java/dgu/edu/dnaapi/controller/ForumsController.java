@@ -1,6 +1,7 @@
 package dgu.edu.dnaapi.controller;
 
 import dgu.edu.dnaapi.annotation.JwtRequired;
+import dgu.edu.dnaapi.controller.dto.BoardSearchCondition;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.dto.forum.ForumSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.forum.ForumsMetaDataResponseDto;
@@ -8,6 +9,9 @@ import dgu.edu.dnaapi.domain.dto.forum.ForumsResponseDto;
 import dgu.edu.dnaapi.domain.response.*;
 import dgu.edu.dnaapi.service.ForumsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -40,15 +44,12 @@ public class ForumsController {
     }
 
     @GetMapping("/forums")
-    public ResponseEntity<Message> findAll() {
-        List<ForumsMetaDataResponseDto> noticesList = forumsService.findAllForumMetaData();
-        ListResponse listResponse = ListResponse.builder()
-                .list(noticesList)
-                .totalCount(noticesList.size())
-                .build();
-
-        Message message = Message.createSuccessMessage(listResponse);
-        return new ResponseEntity(message, new HttpHeaders(), HttpStatus.OK);
+    public ResponseEntity<Message> findAll(
+            @PageableDefault(size = 13, sort = "noticeId", direction = Sort.Direction.DESC) Pageable pageable,
+            BoardSearchCondition condition
+    ) {
+        ListResponse result = forumsService.findAllForumsMetaDataWithCondition(condition, pageable);
+        return new ResponseEntity(result, new HttpHeaders(), HttpStatus.OK);
     }
 
     @GetMapping("/forums/{id}")

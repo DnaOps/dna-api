@@ -1,12 +1,15 @@
 package dgu.edu.dnaapi.service;
 
+import dgu.edu.dnaapi.controller.dto.BoardSearchCondition;
 import dgu.edu.dnaapi.domain.Forums;
 import dgu.edu.dnaapi.domain.dto.forum.ForumSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.forum.ForumsMetaDataResponseDto;
 import dgu.edu.dnaapi.domain.response.DnaStatusCode;
+import dgu.edu.dnaapi.domain.response.ListResponse;
 import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.forum.ForumsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,5 +59,18 @@ public class ForumsService {
     public List<ForumsMetaDataResponseDto> findAllForumMetaData() {
         List<Forums> forums = forumsRepository.findAll();
         return forums.stream().map(ForumsMetaDataResponseDto::new).collect(Collectors.toList());
+    }
+
+    public ListResponse findAllForumsMetaDataWithCondition(BoardSearchCondition condition, Pageable pageable) {
+        List<ForumsMetaDataResponseDto> forums = forumsRepository.search(condition, pageable);
+        boolean hasNext = false;
+        if(forums.size() > pageable.getPageSize()){
+            forums.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return ListResponse.builder()
+                        .list(forums)
+                        .hasNext(hasNext)
+                        .build();
     }
 }
