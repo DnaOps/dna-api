@@ -25,4 +25,11 @@ public class Message {
         this.apiStatus = apiStatus;
         this.data = data;
     }
+
+    public static Message createSuccessMessage(Object data){
+        Message message = new Message();
+        message.setData(data);
+        message.setApiStatus(new ApiStatus(DnaStatusCode.OK, null));
+        return message;
+    }
 }

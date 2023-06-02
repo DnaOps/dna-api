@@ -8,21 +8,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ForumLikesService {
 
     private final ForumsRepository forumsRepository;
     private final ForumLikesRepository forumLikesRepository;
 
-    public String chageLikeStatus(User user, Long forumId) {
+    @Transactional
+    public String changeLikeStatus(User user, Long forumId) {
         Forums forum = forumsRepository.findById(forumId).orElseThrow();
         ForumLikes likes = forumLikesRepository.findByUserAndForum(user, forum);
 
         if(likes != null) {
+            forumsRepository.decreaseLikeCount(forum.getForumId());
             forumLikesRepository.delete(likes);
             return "deleted";
         }
+        forumsRepository.increaseLikeCount(forum.getForumId());
         forumLikesRepository.save(new ForumLikes(forum, user));
         return "added";
     }

@@ -32,10 +32,9 @@ public class ForumLikesController {
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
-    // todo 자기가 쓴 글은 좋아요 못하도록
     @PostMapping("/forums/{forumId}")
     public ResponseEntity<Message> clickLike(@JwtRequired User user, @PathVariable Long forumId) {
-        String result = forumLikesService.chageLikeStatus(user, forumId);
+        String result = forumLikesService.changeLikeStatus(user, forumId);
 
         Message message = Message.builder()
                 .data(result)

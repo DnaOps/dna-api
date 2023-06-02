@@ -38,7 +38,7 @@ public class ForumCommentsService {
                     () -> new DNACustomException("해당 댓글이 없습니다. id=" + parentCommentId, DnaStatusCode.INVALID_COMMENT));
             comment.registerParent(parent);
         }
-
+        forumsRepository.increaseCommentCount(forumId);
         return forumCommentsRepository.save(comment).getCommentId();
     }
 
@@ -63,6 +63,7 @@ public class ForumCommentsService {
         if(!comment.getAuthor().getId().equals(userId)) {
             throw new DNACustomException("작성자만 댓글을 삭제할 수 있습니다.", DnaStatusCode.INVALID_AUTHOR);
         }
+        forumsRepository.decreaseCommentCount(comment.getForum().getForumId());
         forumCommentsRepository.deleteById(deleteForumCommentId);
         return deleteForumCommentId;
     }
