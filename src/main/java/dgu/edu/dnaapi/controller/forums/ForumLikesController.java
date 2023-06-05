@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.controller;
+package dgu.edu.dnaapi.controller.forums;
 
 import dgu.edu.dnaapi.annotation.JwtRequired;
 import dgu.edu.dnaapi.domain.Forums;
