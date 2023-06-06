@@ -32,4 +32,8 @@ public class ForumCommentVO {
     public void setDeletedStatus(){
         this.isDeleted = true;
     }
+
+    public boolean hasParentComment(){
+        return this.parentCommentId != null;
+    }
 }

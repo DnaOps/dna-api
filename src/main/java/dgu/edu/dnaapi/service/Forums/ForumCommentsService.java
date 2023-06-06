@@ -90,8 +90,8 @@ public class ForumCommentsService {
         }else{
             forumCommentsRepository.softDeleted(deleteForumCommentId);
         }
-        if(deletedForumComment.getParentCommentId() != null)
-            deleteParentComment(forumCommentsMap, deletedForumComment.getParentCommentId());
+        if(deletedForumComment.hasParentComment())
+            shouldParentCommentBeDeleted(forumCommentsMap, deletedForumComment.getParentCommentId());
 
         return deleteForumCommentId;
     }
@@ -166,13 +166,16 @@ public class ForumCommentsService {
         }
     }
 
-    private void deleteParentComment(Map<Long, ForumCommentVO> forumCommentsMap, Long parentCommentId){
-        if(forumCommentsMap.containsKey(parentCommentId))
-            if(checkAllDeleted(forumCommentsMap.get(parentCommentId).getChildrenComment())){
-                forumCommentsMap.get(parentCommentId).setDeletedStatus();
+    private void shouldParentCommentBeDeleted(Map<Long, ForumCommentVO> forumCommentsMap, Long parentCommentId){
+        if(forumCommentsMap.containsKey(parentCommentId)){
+            ForumCommentVO parentComment = forumCommentsMap.get(parentCommentId);
+            if(checkAllDeleted(parentComment.getChildrenComment())){
+                parentComment.setDeletedStatus();
                 forumCommentsRepository.deleteById(parentCommentId);
-                if(forumCommentsMap.get(parentCommentId).getParentCommentId() != null)
-                    deleteParentComment(forumCommentsMap, forumCommentsMap.get(parentCommentId).getParentCommentId());
+                if(parentComment.hasParentComment())
+                    shouldParentCommentBeDeleted(forumCommentsMap, forumCommentsMap.get(parentCommentId).getParentCommentId());
             }
+        }
+
     }
 }
