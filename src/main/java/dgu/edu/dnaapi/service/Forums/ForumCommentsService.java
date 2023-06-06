@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.service;
+package dgu.edu.dnaapi.service.Forums;
 
 import dgu.edu.dnaapi.controller.dto.CommentSearchCondition;
 import dgu.edu.dnaapi.domain.*;
@@ -10,11 +10,13 @@ import dgu.edu.dnaapi.domain.response.ListResponse;
 import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.forum.ForumCommentsRepository;
 import dgu.edu.dnaapi.repository.forum.ForumsRepository;
+import dgu.edu.dnaapi.service.Forums.vo.ForumCommentVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,7 +37,6 @@ public class ForumCommentsService {
 
         if(requestDto.getParentCommentId() != null) {
             Long parentCommentId = requestDto.getParentCommentId();
-            // Todo : Fetch 시 forumID 가져오도록 fetch join 실시
             ForumComments parent = forumCommentsRepository.findByCommentIdWithForum(parentCommentId).orElseThrow(
                     () -> new DNACustomException("해당 댓글이 없습니다. id=" + parentCommentId, DnaStatusCode.INVALID_COMMENT));
             if(parent.getForum().getForumId() != forumId)
@@ -61,15 +62,37 @@ public class ForumCommentsService {
 
     @Transactional
     public Long delete(Long userId, Long deleteForumCommentId) {
-        // todo 나중에 대댓글 삭제 조건 처리 등 추가 해야함
-        ForumComments comment = forumCommentsRepository.findById(deleteForumCommentId).orElseThrow(
+        ForumComments comment = forumCommentsRepository.findByCommentIdWithAuthorAndForum(deleteForumCommentId).orElseThrow(
                 () -> new DNACustomException("해당 댓글이 없습니다. id=" + deleteForumCommentId, DnaStatusCode.INVALID_COMMENT));
-
+        if(comment.isDeleted())
+            throw new DNACustomException("이미 삭제된 댓글입니다. id = " + deleteForumCommentId ,DnaStatusCode.INVALID_DELETE_COMMENT);
         if(!comment.getAuthor().getId().equals(userId)) {
             throw new DNACustomException("작성자만 댓글을 삭제할 수 있습니다.", DnaStatusCode.INVALID_AUTHOR);
         }
+
         forumsRepository.decreaseCommentCount(comment.getForum().getForumId());
-        forumCommentsRepository.deleteById(deleteForumCommentId);
+        Long commentGroupId = comment.getCommentGroupId();
+        List<ForumComments> forumCommentsList = new ArrayList<>();
+        if(commentGroupId == null){
+            commentGroupId = comment.getCommentId();
+            forumCommentsList.add(comment);
+        }
+        List<ForumComments> allReplyComments = forumCommentsRepository.findAllReplyCommentsByCommentGroupId(comment.getForum().getForumId(), commentGroupId);
+        forumCommentsList.addAll(allReplyComments);
+        List<ForumCommentVO> forumCommentVOList = forumCommentsList.stream().map(ForumCommentVO::convertToForumCommentVO).collect(Collectors.toList());
+
+        Map<Long, ForumCommentVO> forumCommentsMap = createForumCommentHierarchyStructure(forumCommentVOList);
+
+        ForumCommentVO deletedForumComment = forumCommentsMap.get(deleteForumCommentId);
+        deletedForumComment.setDeletedStatus();
+        if (checkAllDeleted(deletedForumComment.getChildrenComment())){
+            forumCommentsRepository.deleteById(deleteForumCommentId);
+        }else{
+            forumCommentsRepository.softDeleted(deleteForumCommentId);
+        }
+        if(deletedForumComment.getParentCommentId() != null)
+            deleteParentComment(forumCommentsMap, deletedForumComment.getParentCommentId());
+
         return deleteForumCommentId;
     }
 
@@ -87,7 +110,7 @@ public class ForumCommentsService {
         commentsList.addAll(allReplyComments);
 
         List<ForumCommentsResponseDto> forumCommentsResponseDtos = convertToForumCommentsResponseDto(commentsList);
-        List<ForumCommentsResponseDto> result = createCommentHierarchyStructure(forumCommentsResponseDtos);
+        List<ForumCommentsResponseDto> result = createForumCommentResponseHierarchyStructure(forumCommentsResponseDtos);
         return ListResponse.builder().list(result).hasNext(hasNext).build();
     }
 
@@ -100,10 +123,9 @@ public class ForumCommentsService {
         return commentsList.stream().map(c -> c.getCommentId()).collect(Collectors.toList());
     }
 
-    private List<ForumCommentsResponseDto> createCommentHierarchyStructure(List<ForumCommentsResponseDto> forumCommentsResponseDtos){
+    private List<ForumCommentsResponseDto> createForumCommentResponseHierarchyStructure(List<ForumCommentsResponseDto> forumCommentsResponseDtos){
         List<ForumCommentsResponseDto> result = new ArrayList<>();
         Map<Long, ForumCommentsResponseDto> replyCommentMap = new HashMap<>();
-
         forumCommentsResponseDtos.stream().forEach(
                 c -> {
                     replyCommentMap.put(c.getCommentId(), c);
@@ -111,5 +133,46 @@ public class ForumCommentsService {
                     else result.add(c);
                 });
         return result;
+    }
+
+    private Map<Long, ForumCommentVO> createForumCommentHierarchyStructure(List<ForumCommentVO> forumCommentVO){
+        Map<Long, ForumCommentVO> commentsMap = new HashMap<>();
+        forumCommentVO.stream().forEach(
+                c -> {
+                    commentsMap.put(c.getCommentId(), c);
+                    if(commentsMap.containsKey(c.getParentCommentId())) commentsMap.get(c.getParentCommentId()).addChild(c);
+                }
+        );
+        return commentsMap;
+    }
+
+    private boolean checkAllDeleted(List<ForumCommentVO> forumComments){
+        for (ForumCommentVO forumCommentVO : forumComments) {
+            if (!forumCommentVO.isDeleted()) {
+                return false;
+            }
+            if(!checkAllDeleted(forumCommentVO.getChildrenComment())){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void dfs(List<ForumCommentVO> forumComments){
+        System.out.println("forumComments.size() = " + forumComments.size());
+        for(int i = 0; i < forumComments.size(); ++i){
+            System.out.println(" i + forumComments.get(i).getCommentId() + forumComments.get(i).isDeleted() = " +  i + forumComments.get(i).getCommentId() + forumComments.get(i).isDeleted());
+            dfs(forumComments.get(i).childrenComment);
+        }
+    }
+
+    private void deleteParentComment(Map<Long, ForumCommentVO> forumCommentsMap, Long parentCommentId){
+        if(forumCommentsMap.containsKey(parentCommentId))
+            if(checkAllDeleted(forumCommentsMap.get(parentCommentId).getChildrenComment())){
+                forumCommentsMap.get(parentCommentId).setDeletedStatus();
+                forumCommentsRepository.deleteById(parentCommentId);
+                if(forumCommentsMap.get(parentCommentId).getParentCommentId() != null)
+                    deleteParentComment(forumCommentsMap, forumCommentsMap.get(parentCommentId).getParentCommentId());
+            }
     }
 }

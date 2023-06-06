@@ -30,10 +30,11 @@ public class ForumCommentsResponseDto {
 
     public static ForumCommentsResponseDto convertForumCommentToResponseDto(ForumComments forumComments){
         Long parentCommentId = (forumComments.getParent() != null) ? forumComments.getParent().getCommentId() : null;
+        String comment = ((forumComments.isDeleted() == true ) ? "삭제된 댓글입니다." : forumComments.getContent());
         return ForumCommentsResponseDto.builder()
                 .commentId(forumComments.getCommentId())
                 .commentGroupId(forumComments.getCommentGroupId())
-                .content(forumComments.getContent())
+                .content(comment)
                 .author(forumComments.getAuthor().getUserName())
                 .authorId(forumComments.getAuthor().getId())
                 .parentCommentId(parentCommentId)

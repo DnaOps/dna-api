@@ -2,6 +2,7 @@ package dgu.edu.dnaapi.repository.forum;
 
 import dgu.edu.dnaapi.domain.ForumComments;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,4 +17,11 @@ public interface ForumCommentsRepository extends JpaRepository<ForumComments, Lo
 
     @Query("select c from ForumComments c join fetch c.forum where c.commentId = :commentId")
     Optional<ForumComments> findByCommentIdWithForum(@Param("commentId")Long commentId);
+
+    @Query("select c from ForumComments c join fetch c.author join fetch c.forum where c.commentId = :commentId")
+    Optional<ForumComments> findByCommentIdWithAuthorAndForum(@Param("commentId")Long commentId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE ForumComments c set c.isDeleted = true where c.commentId =:commentId")
+    void softDeleted(@Param("commentId")Long commentId);
 }

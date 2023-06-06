@@ -5,9 +5,8 @@ import dgu.edu.dnaapi.controller.dto.CommentSearchCondition;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.dto.comments.CommentsSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.comments.CommentsUpdateRequestDto;
-import dgu.edu.dnaapi.domain.dto.forumComments.ForumCommentsResponseDto;
 import dgu.edu.dnaapi.domain.response.*;
-import dgu.edu.dnaapi.service.ForumCommentsService;
+import dgu.edu.dnaapi.service.Forums.ForumCommentsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,8 +14,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
