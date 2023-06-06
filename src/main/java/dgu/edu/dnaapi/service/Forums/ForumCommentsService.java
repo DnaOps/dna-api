@@ -169,13 +169,11 @@ public class ForumCommentsService {
     private void shouldParentCommentBeDeleted(Map<Long, ForumCommentVO> forumCommentsMap, Long parentCommentId){
         if(forumCommentsMap.containsKey(parentCommentId)){
             ForumCommentVO parentComment = forumCommentsMap.get(parentCommentId);
-            if(checkAllDeleted(parentComment.getChildrenComment())){
-                parentComment.setDeletedStatus();
+            if(parentComment.isDeleted() && checkAllDeleted(parentComment.getChildrenComment())){
                 forumCommentsRepository.deleteById(parentCommentId);
                 if(parentComment.hasParentComment())
-                    shouldParentCommentBeDeleted(forumCommentsMap, forumCommentsMap.get(parentCommentId).getParentCommentId());
+                    shouldParentCommentBeDeleted(forumCommentsMap, parentComment.getParentCommentId());
             }
         }
-
     }
 }

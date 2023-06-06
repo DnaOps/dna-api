@@ -65,12 +65,15 @@ public class ForumCommentsRepositoryCustomImpl implements ForumCommentsRepositor
                 .join(forumComments.forum, forums).fetchJoin()
                 .join(forumComments.author, user).fetchJoin()
                 .where(
-                        forumComments.forum.forumId.eq(forumId),
-                        forumComments.commentGroupId.eq(commentGroupId))
+                        isInForumCommentsGroup(forumId, commentGroupId))
                 .orderBy(
                         forumComments.parent.commentId.asc(),
                         forumComments.createdDate.asc()
                 )
                 .fetch();
+    }
+
+    private BooleanExpression isInForumCommentsGroup(Long forumId, Long commentGroupId) {
+        return forumComments.commentId.eq(commentGroupId).or(forumComments.forum.forumId.eq(forumId).and(forumComments.commentGroupId.eq(commentGroupId)));
     }
 }
