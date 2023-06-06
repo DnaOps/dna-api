@@ -3,50 +3,46 @@ package dgu.edu.dnaapi.domain.dto.forumComments;
 import dgu.edu.dnaapi.domain.ForumComments;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.response.ListResponse;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@Setter
+@Builder
 public class ForumCommentsResponseDto {
 
     private Long commentId;
     private String content;
     private String author;
     private Long authorId;
-    private Long parentId;
+    private Long commentGroupId;
+    private Long parentCommentId;
+    private String createdAt;
     private String modifiedAt;
-    private ListResponse childrenComments;
     private int level;
     private int likeCount;
+    private List<ForumCommentsResponseDto> childrenComments;
 
-    public ForumCommentsResponseDto(ForumComments entity) {
-        this.commentId = entity.getCommentId();
-        this.content = entity.getContent();
-
-        User author = entity.getAuthor();
-        if  (author != null) {
-            this.author = author.getUserName();
-            this.authorId = author.getId();
-            this.level = author.getLevel();
-        }
-        ForumComments parent = entity.getParent();
-
-        if (parent != null)
-            this.parentId = parent.getCommentId();
-
-        this.modifiedAt = entity.getLastModifiedDate().toString();
-
-        if(!entity.getChildList().isEmpty()) {
-            List<ForumCommentsResponseDto> children = entity.getChildList()
-                    .stream().map(ForumCommentsResponseDto::new).collect(Collectors.toList());
-            this.childrenComments = ListResponse.builder()
-                    .list(children)
-                    .totalCount(children.size())
-                    .build();
-        }
-        // todo comment like
-        this.likeCount = 0;
+    public static ForumCommentsResponseDto convertForumCommentToResponseDto(ForumComments forumComments){
+        Long parentCommentId = (forumComments.getParent() != null) ? forumComments.getParent().getCommentId() : null;
+        String comment = ((forumComments.isDeleted() == true ) ? "삭제된 댓글입니다." : forumComments.getContent());
+        return ForumCommentsResponseDto.builder()
+                .commentId(forumComments.getCommentId())
+                .commentGroupId(forumComments.getCommentGroupId())
+                .content(comment)
+                .author(forumComments.getAuthor().getUserName())
+                .authorId(forumComments.getAuthor().getId())
+                .parentCommentId(parentCommentId)
+                .createdAt(forumComments.getCreatedDate().toString())
+                .modifiedAt(forumComments.getLastModifiedDate().toString())
+                .level(forumComments.getAuthor().getLevel())
+                .likeCount(forumComments.getLikeCount())
+                .childrenComments(new ArrayList<>())
+                .build();
     }
 }

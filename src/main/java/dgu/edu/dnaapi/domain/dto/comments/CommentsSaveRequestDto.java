@@ -12,19 +12,22 @@ public class CommentsSaveRequestDto {
     private String content;
     private Long postId;
     private Long parentCommentId;
+    private Long commentGroupId;
 
     @Builder
-    public CommentsSaveRequestDto(String content, Long postId, Long parentCommentId) {
+    public CommentsSaveRequestDto(String content, Long postId, Long parentCommentId, Long commentGroupId) {
         this.content = content;
         this.postId = postId;
         this.parentCommentId = parentCommentId;
+        this.commentGroupId = commentGroupId;
     }
 
     public ForumComments toForumComments(User user) {
         ForumComments comments = ForumComments.builder()
                 .content(content)
                 .author(user)
-                .parentCommentId(parentCommentId)
+                .commentGroupId(commentGroupId)
+                .isDeleted(false)
                 .build();
 
         return comments;

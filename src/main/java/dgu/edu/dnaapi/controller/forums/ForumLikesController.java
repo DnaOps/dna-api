@@ -1,11 +1,11 @@
-package dgu.edu.dnaapi.controller;
+package dgu.edu.dnaapi.controller.forums;
 
 import dgu.edu.dnaapi.annotation.JwtRequired;
 import dgu.edu.dnaapi.domain.Forums;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.response.*;
-import dgu.edu.dnaapi.service.ForumLikesService;
-import dgu.edu.dnaapi.service.ForumsService;
+import dgu.edu.dnaapi.service.Forums.ForumLikesService;
+import dgu.edu.dnaapi.service.Forums.ForumsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

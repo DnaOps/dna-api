@@ -24,7 +24,7 @@ public class ForumComments extends BaseEntity{
     @JoinColumn(name = "parentId")
     private ForumComments parent;
 
-    private Long parentCommentId;
+    private Long commentGroupId;
 
     @OneToMany(mappedBy = "parent")
     private List<ForumComments> childList = new ArrayList<>();
@@ -39,14 +39,17 @@ public class ForumComments extends BaseEntity{
 
     private int likeCount;
 
+    private boolean isDeleted = false;
+
     @Builder
-    public ForumComments(Forums forum, User author, String content, ForumComments parent, Long parentCommentId, int likeCount) {
+    public ForumComments(Forums forum, User author, String content, ForumComments parent, Long commentGroupId, int likeCount, boolean isDeleted) {
         this.forum = forum;
         this.author = author;
         this.content = content;
         this.parent = parent;
-        this.parentCommentId = parentCommentId;
+        this.commentGroupId = commentGroupId;
         this.likeCount = likeCount;
+        this.isDeleted = isDeleted;
     }
 
     public void addChild(ForumComments child){

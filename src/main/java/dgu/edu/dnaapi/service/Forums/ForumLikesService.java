@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.service;
+package dgu.edu.dnaapi.service.Forums;
 
 import dgu.edu.dnaapi.domain.*;
 import dgu.edu.dnaapi.repository.forum.ForumLikesRepository;

@@ -1,13 +1,12 @@
-package dgu.edu.dnaapi.controller;
+package dgu.edu.dnaapi.controller.forums;
 
 import dgu.edu.dnaapi.annotation.JwtRequired;
 import dgu.edu.dnaapi.controller.dto.BoardSearchCondition;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.dto.forum.ForumSaveRequestDto;
-import dgu.edu.dnaapi.domain.dto.forum.ForumsMetaDataResponseDto;
 import dgu.edu.dnaapi.domain.dto.forum.ForumsResponseDto;
 import dgu.edu.dnaapi.domain.response.*;
-import dgu.edu.dnaapi.service.ForumsService;
+import dgu.edu.dnaapi.service.Forums.ForumsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,8 +14,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
