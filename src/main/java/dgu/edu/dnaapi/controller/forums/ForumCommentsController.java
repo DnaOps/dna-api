@@ -1,12 +1,14 @@
 package dgu.edu.dnaapi.controller.forums;
 
 import dgu.edu.dnaapi.annotation.JwtRequired;
+import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.controller.dto.CommentSearchCondition;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.dto.comments.CommentsSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.comments.CommentsUpdateRequestDto;
 import dgu.edu.dnaapi.domain.response.*;
 import dgu.edu.dnaapi.service.Forums.ForumCommentsService;
+import dgu.edu.dnaapi.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,12 +17,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/comments")
 public class ForumCommentsController {
 
     private final ForumCommentsService forumCommentsService;
+    private final TokenService tokenService;
 
     @PostMapping("/forums")
     public ResponseEntity<Message> save(@JwtRequired User findUser,
@@ -35,8 +40,11 @@ public class ForumCommentsController {
     public ResponseEntity<Message> findALLForumCommentsByForumId(
                 @PathVariable Long id,
                 CommentSearchCondition commentSearchCondition,
-                @PageableDefault(size = 3, sort = "commentId", direction = Sort.Direction.ASC) Pageable pageable
+                @PageableDefault(size = 7, sort = "commentId", direction = Sort.Direction.ASC) Pageable pageable,
+                @RequestHeader(JwtProperties.HEADER_STRING) String headerTokenValue
                 ) {
+        if(hasText(headerTokenValue))
+            commentSearchCondition.setUserId(tokenService.getUserId(headerTokenValue));
         ListResponse result = forumCommentsService.findAllForumComments(commentSearchCondition, id, pageable);
         Message message = Message.createSuccessMessage(result);
 
