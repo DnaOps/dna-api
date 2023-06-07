@@ -17,17 +17,21 @@ public interface ForumsRepository extends JpaRepository<Forums, Long>, ForumsRep
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Forums f set f.likeCount = f.likeCount + 1 where f.forumId = :forumId")
-    int increaseLikeCount(@Param("forumId")Long forumId);
+    int increaseLikeCount(@Param("forumId") Long forumId);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Forums f set f.likeCount = f.likeCount - 1 where f.forumId = :forumId")
-    int decreaseLikeCount(@Param("forumId")Long forumId);
+    int decreaseLikeCount(@Param("forumId") Long forumId);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Forums f set f.commentCount = f.commentCount + 1 where f.forumId = :forumId")
-    int increaseCommentCount(@Param("forumId")Long forumId);
+    int increaseCommentCount(@Param("forumId") Long forumId);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Forums f set f.commentCount = f.commentCount - 1 where f.forumId = :forumId")
-    int decreaseCommentCount(@Param("forumId")Long forumId);
+    int decreaseCommentCount(@Param("forumId") Long forumId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("DELETE FROM Forums f WHERE f.forumId = :forumId")
+    int deleteForumsByForumId(@Param("forumId") Long forumId);
 }

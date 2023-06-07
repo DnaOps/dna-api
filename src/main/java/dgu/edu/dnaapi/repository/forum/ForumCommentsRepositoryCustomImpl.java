@@ -76,4 +76,19 @@ public class ForumCommentsRepositoryCustomImpl implements ForumCommentsRepositor
     private BooleanExpression isInForumCommentsGroup(Long forumId, Long commentGroupId) {
         return forumComments.commentId.eq(commentGroupId).or(forumComments.forum.forumId.eq(forumId).and(forumComments.commentGroupId.eq(commentGroupId)));
     }
+
+    @Override
+    public List<ForumComments> findAllCommentsByForumId(Long forumId) {
+        return queryFactory
+                .selectFrom(forumComments)
+                .leftJoin(forumComments.parent).fetchJoin()
+                .join(forumComments.forum, forums).fetchJoin()
+                .where(
+                        forumComments.forum.forumId.eq(forumId))
+                .orderBy(
+                        forumComments.parent.commentId.asc().nullsFirst(),
+                        forumComments.createdDate.asc()
+                )
+                .fetch();
+    }
 }

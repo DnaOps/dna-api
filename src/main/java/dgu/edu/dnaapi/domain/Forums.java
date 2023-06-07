@@ -33,7 +33,7 @@ public class Forums extends BaseEntity{
     @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ForumComments> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ForumLikes> likes = new HashSet<>();
 
     @Column(columnDefinition = "int default 0", nullable = false)

@@ -33,4 +33,7 @@ public interface ForumCommentsRepository extends JpaRepository<ForumComments, Lo
     @Query("update ForumComments c set c.likeCount = c.likeCount - 1 where c.commentId = :forumCommentId")
     int decreaseLikeCount(@Param("forumCommentId") Long forumCommentId);
 
+    @Modifying(clearAutomatically = true)
+    @Query("DELETE FROM ForumComments c where c.commentId = :forumCommentId")
+    int deleteForumCommentByForumCommentId(@Param("forumCommentId") Long forumCommentId);
 }

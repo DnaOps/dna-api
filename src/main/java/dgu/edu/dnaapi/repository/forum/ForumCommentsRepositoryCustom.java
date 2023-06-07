@@ -11,4 +11,5 @@ public interface ForumCommentsRepositoryCustom {
     List<ForumComments> search(Long forumId, Long start, Pageable pageable);
     List<ForumComments> findAllReplyComments(Long forumId, List<Long> commentsId);
     List<ForumComments> findAllReplyCommentsByCommentGroupId(Long forumId, Long commentGroupId);
+    List<ForumComments> findAllCommentsByForumId(Long forumId);
 }
