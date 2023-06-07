@@ -23,24 +23,14 @@ public class ForumLikesController {
     public ResponseEntity<Message> isLikedByUser(@JwtRequired User user, @PathVariable Long forumId) {
         Forums forum = forumsService.findById(forumId);
         boolean isLiked = forumLikesService.isForumLikedByUser(user, forum);
-
-        Message message = Message.builder()
-                .data(isLiked)
-                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
-                .build();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
+        Message message = Message.createSuccessMessage(isLiked);
+        return new ResponseEntity(message, new HttpHeaders(), HttpStatus.OK);
     }
 
     @PostMapping("/forums/{forumId}")
     public ResponseEntity<Message> clickLike(@JwtRequired User user, @PathVariable Long forumId) {
         String result = forumLikesService.changeLikeStatus(user, forumId);
-
-        Message message = Message.builder()
-                .data(result)
-                .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
-                .build();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
+        Message message = Message.createSuccessMessage(result);
+        return new ResponseEntity(message, new HttpHeaders(), HttpStatus.OK);
     }
 }
