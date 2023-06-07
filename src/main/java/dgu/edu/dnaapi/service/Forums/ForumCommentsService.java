@@ -102,19 +102,29 @@ public class ForumCommentsService {
     public ListResponse findAllForumComments(CommentSearchCondition commentSearchCondition, Long forumId, Pageable pageable) {
 
         List<ForumComments> commentsList = forumCommentsRepository.search(forumId, commentSearchCondition.getStart(), pageable);
-        boolean hasNext = false;
-        if(commentsList.size() > pageable.getPageSize()){
-            hasNext = true;
-            commentsList.remove(pageable.getPageSize());
-        }
+        boolean hasNext = isHasNext(pageable.getPageSize(), commentsList);
 
         List<Long> commentIds = getCommentIds(commentsList);
-        List<ForumComments> allReplyComments = forumCommentsRepository.findAllReplyComments(forumId, commentIds);
-        commentsList.addAll(allReplyComments);
-
+        commentsList.addAll(forumCommentsRepository.findAllReplyComments(forumId, commentIds));
         List<ForumCommentsResponseDto> forumCommentsResponseDtos = convertToForumCommentsResponseDto(commentsList);
-        List<ForumCommentsResponseDto> result = createForumCommentResponseHierarchyStructure(forumCommentsResponseDtos);
+        Set<Long> forumCommentIdsLikedByUser = new HashSet<>();
+        if(commentSearchCondition.hasUserId()){
+            forumCommentIdsLikedByUser = getForumCommentIdsLikedByUser(commentSearchCondition.getUserId(), getCommentIds(commentsList));
+        }
+        List<ForumCommentsResponseDto> result = createForumCommentResponseHierarchyStructure(forumCommentsResponseDtos, forumCommentIdsLikedByUser);
         return ListResponse.builder().list(result).hasNext(hasNext).build();
+    }
+
+    private Set<Long> getForumCommentIdsLikedByUser(Long userId, List<Long> allForumCommentIds) {
+        return forumCommentsLikesRepository.findForumCommentIdsLikedByUserId(userId, allForumCommentIds);
+    }
+
+    private boolean isHasNext(int pageSize, List<ForumComments> commentsList) {
+        if(commentsList.size() > pageSize){
+            commentsList.remove(pageSize);
+            return true;
+        }
+        return false;
     }
 
     private List<ForumCommentsResponseDto> convertToForumCommentsResponseDto(List<ForumComments> commentsList) {
@@ -123,14 +133,15 @@ public class ForumCommentsService {
     }
 
     private List<Long> getCommentIds(List<ForumComments> commentsList) {
-        return commentsList.stream().map(c -> c.getCommentId()).collect(Collectors.toList());
+        return commentsList.stream().map(ForumComments::getCommentId).collect(Collectors.toList());
     }
 
-    private List<ForumCommentsResponseDto> createForumCommentResponseHierarchyStructure(List<ForumCommentsResponseDto> forumCommentsResponseDtos){
+    private List<ForumCommentsResponseDto> createForumCommentResponseHierarchyStructure(List<ForumCommentsResponseDto> forumCommentsResponseDtos, Set<Long> forumCommentIdsLikedByUser){
         List<ForumCommentsResponseDto> result = new ArrayList<>();
         Map<Long, ForumCommentsResponseDto> replyCommentMap = new HashMap<>();
         forumCommentsResponseDtos.stream().forEach(
                 c -> {
+                    if(forumCommentIdsLikedByUser.contains(c.getCommentId())) c.likedByUser();
                     replyCommentMap.put(c.getCommentId(), c);
                     if (c.getParentCommentId() != null) replyCommentMap.get(c.getParentCommentId()).getChildrenComments().add(c);
                     else result.add(c);

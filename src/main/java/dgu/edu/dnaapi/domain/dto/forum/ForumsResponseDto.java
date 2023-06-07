@@ -7,9 +7,9 @@ import lombok.Getter;
 public class ForumsResponseDto extends ForumsMetaDataResponseDto{
 
     private String content;
-    private boolean isLikedByUser;
+    private Boolean isLikedByUser;
 
-    public ForumsResponseDto(Forums entity, boolean isLikedByUser){
+    public ForumsResponseDto(Forums entity, Boolean isLikedByUser){
         super(entity);
         this.content = entity.getContent();
         this.isLikedByUser = isLikedByUser;

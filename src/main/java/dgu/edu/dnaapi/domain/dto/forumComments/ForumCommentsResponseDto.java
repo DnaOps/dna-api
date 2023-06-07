@@ -26,6 +26,8 @@ public class ForumCommentsResponseDto {
     private String modifiedAt;
     private int level;
     private int likeCount;
+    private Boolean isForumCommentLikedByUser;
+    private Boolean isDeleted;
     private List<ForumCommentsResponseDto> childrenComments;
 
     public static ForumCommentsResponseDto convertForumCommentToResponseDto(ForumComments forumComments){
@@ -40,9 +42,15 @@ public class ForumCommentsResponseDto {
                 .parentCommentId(parentCommentId)
                 .createdAt(forumComments.getCreatedDate().toString())
                 .modifiedAt(forumComments.getLastModifiedDate().toString())
+                .isForumCommentLikedByUser(false)
+                .isDeleted(forumComments.isDeleted())
                 .level(forumComments.getAuthor().getLevel())
                 .likeCount(forumComments.getLikeCount())
                 .childrenComments(new ArrayList<>())
                 .build();
+    }
+
+    public void likedByUser() {
+        this.isForumCommentLikedByUser = true;
     }
 }

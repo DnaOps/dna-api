@@ -5,6 +5,10 @@ import dgu.edu.dnaapi.domain.*;
 
 import javax.persistence.EntityManager;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static dgu.edu.dnaapi.domain.QForumComments.*;
 import static dgu.edu.dnaapi.domain.QForumCommentsLikes.*;
 import static dgu.edu.dnaapi.domain.QUser.*;
@@ -46,5 +50,17 @@ public class ForumCommentsLikesRepositoryCustomImpl implements ForumCommentsLike
                 .delete(forumCommentsLikes)
                 .where(forumCommentsLikes.forumComments.commentId.eq(forumCommentsId))
                 .execute();
+    }
+
+    @Override
+    public Set<Long> findForumCommentIdsLikedByUserId(Long userId, List<Long> commentIds) {
+        return queryFactory
+                .select(forumCommentsLikes.forumComments.commentId)
+                .from(forumCommentsLikes)
+                .where(
+                        forumCommentsLikes.user.id.eq(userId)
+                                .and(forumCommentsLikes.forumComments.commentId.in(commentIds)))
+                .fetch()
+                .stream().collect(Collectors.toSet());
     }
 }
