@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Entity
 @Builder
 @NoArgsConstructor
@@ -33,7 +35,7 @@ public class Forums extends BaseEntity{
     @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ForumComments> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ForumLikes> likes = new HashSet<>();
 
     @Column(columnDefinition = "int default 0", nullable = false)
@@ -57,7 +59,9 @@ public class Forums extends BaseEntity{
     }
 
     public void update(String title, String content) {
-        this.title = title;
-        this.content = content;
+        if (hasText(title))
+            this.title = title;
+        if (hasText(content))
+            this.content = content;
     }
 }
