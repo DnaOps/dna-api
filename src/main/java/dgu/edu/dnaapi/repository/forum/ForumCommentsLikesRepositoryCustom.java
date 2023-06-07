@@ -8,4 +8,5 @@ public interface ForumCommentsLikesRepositoryCustom {
 
     boolean isForumLikedByUser(User user, ForumComments forumComments);
     ForumCommentsLikes findForumCommentsLikesByUserAndForumComments(Long userId, Long forumCommentsId);
+    long deleteAllForumCommentsLikesByForumCommentsId(Long forumCommentsId);
 }

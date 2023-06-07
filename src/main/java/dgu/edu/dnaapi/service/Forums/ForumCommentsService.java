@@ -8,6 +8,7 @@ import dgu.edu.dnaapi.domain.dto.forumComments.ForumCommentsResponseDto;
 import dgu.edu.dnaapi.domain.response.DnaStatusCode;
 import dgu.edu.dnaapi.domain.response.ListResponse;
 import dgu.edu.dnaapi.exception.DNACustomException;
+import dgu.edu.dnaapi.repository.forum.ForumCommentsLikesRepository;
 import dgu.edu.dnaapi.repository.forum.ForumCommentsRepository;
 import dgu.edu.dnaapi.repository.forum.ForumsRepository;
 import dgu.edu.dnaapi.service.Forums.vo.ForumCommentVO;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class ForumCommentsService {
     private final ForumsRepository forumsRepository;
     private final ForumCommentsRepository forumCommentsRepository;
+    private final ForumCommentsLikesRepository forumCommentsLikesRepository;
 
     @Transactional
     public Long save(User user, CommentsSaveRequestDto requestDto) {
@@ -90,6 +92,7 @@ public class ForumCommentsService {
         }else{
             forumCommentsRepository.softDeleted(deleteForumCommentId);
         }
+        forumCommentsLikesRepository.deleteAllForumCommentsLikesByForumCommentsId(deleteForumCommentId);
         if(deletedForumComment.hasParentComment())
             shouldParentCommentBeDeleted(forumCommentsMap, deletedForumComment.getParentCommentId());
 
