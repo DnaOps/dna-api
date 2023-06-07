@@ -2,7 +2,6 @@ package dgu.edu.dnaapi.repository.forum;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dgu.edu.dnaapi.domain.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 
@@ -39,5 +38,13 @@ public class ForumCommentsLikesRepositoryCustomImpl implements ForumCommentsLike
                         forumCommentsLikes.user.id.eq(userId),
                         forumCommentsLikes.forumComments.commentId.eq(forumCommentsId))
                 .fetchOne();
+    }
+
+    @Override
+    public long deleteAllForumCommentsLikesByForumCommentsId(Long forumCommentsId) {
+        return queryFactory
+                .delete(forumCommentsLikes)
+                .where(forumCommentsLikes.forumComments.commentId.eq(forumCommentsId))
+                .execute();
     }
 }
