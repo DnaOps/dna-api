@@ -9,7 +9,6 @@ import dgu.edu.dnaapi.repository.refreshtoken.RefreshToken;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshTokenRepository;
 import dgu.edu.dnaapi.util.jwt.TokenProvider;
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
@@ -49,15 +48,11 @@ public class TokenService {
         return accessToken;
     }
 
-    public Long getUserId(final String accessToken) {
+    public Long getUserId(final String authorizationHeaderValue) {
         try {
-            String memberId = Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(accessToken)
-                    .getBody()
-                    .getSubject();
-            return Long.parseLong(memberId);
+            String accessToken = tokenProvider.resolveToken(authorizationHeaderValue);
+            System.out.println("accessToken = " + accessToken);
+            return tokenProvider.getUserIdFromClaims(accessToken);
         } catch (final JwtException e) {
             // Todo : InvalidAccessTokenException 만들기
             throw new DNACustomException("InvalidAccessTokenException", DnaStatusCode.TOKEN_INVALID);

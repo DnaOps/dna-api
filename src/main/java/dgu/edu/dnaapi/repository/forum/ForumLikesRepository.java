@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ForumLikesRepository extends JpaRepository<ForumLikes, Long> {
+public interface ForumLikesRepository extends JpaRepository<ForumLikes, Long>, ForumLikesRepositoryCustom {
     ForumLikes findByUserAndForum(User user, Forums forum);
 
     @Modifying(clearAutomatically = true)

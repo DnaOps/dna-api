@@ -1,12 +1,14 @@
 package dgu.edu.dnaapi.controller.forums;
 
 import dgu.edu.dnaapi.annotation.JwtRequired;
+import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.controller.dto.BoardSearchCondition;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.dto.forum.ForumSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.forum.ForumsResponseDto;
 import dgu.edu.dnaapi.domain.response.*;
 import dgu.edu.dnaapi.service.Forums.ForumsService;
+import dgu.edu.dnaapi.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,12 +17,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/boards")
 public class ForumsController {
 
     private final ForumsService forumsService;
+    private final TokenService tokenService;
 
     @PostMapping("/forums")
     public ResponseEntity<Message> save(@JwtRequired User findUser,
@@ -50,9 +55,13 @@ public class ForumsController {
     }
 
     @GetMapping("/forums/{id}")
-    public ResponseEntity<Message> findById(@PathVariable Long id) {
-        ForumsResponseDto responseDto = new ForumsResponseDto(forumsService.findById(id));
-        Message message = Message.createSuccessMessage(responseDto);
+    public ResponseEntity<Message> findById(
+            @PathVariable Long id,
+            @RequestHeader(JwtProperties.HEADER_STRING) String authorizationHeaderValue
+    ) {
+        Long userId = hasText(authorizationHeaderValue) ? tokenService.getUserId(authorizationHeaderValue) : null;
+        ForumsResponseDto result = forumsService.findForumWithLikedInfoByForumIdAndUserId(id, userId);
+        Message message = Message.createSuccessMessage(result);
         return new ResponseEntity(message, new HttpHeaders(), HttpStatus.OK);
     }
 

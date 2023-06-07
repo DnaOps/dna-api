@@ -5,6 +5,7 @@ import dgu.edu.dnaapi.domain.ForumComments;
 import dgu.edu.dnaapi.domain.Forums;
 import dgu.edu.dnaapi.domain.dto.forum.ForumSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.forum.ForumsMetaDataResponseDto;
+import dgu.edu.dnaapi.domain.dto.forum.ForumsResponseDto;
 import dgu.edu.dnaapi.domain.response.DnaStatusCode;
 import dgu.edu.dnaapi.domain.response.ListResponse;
 import dgu.edu.dnaapi.exception.DNACustomException;
@@ -52,6 +53,13 @@ public class ForumsService {
         }
         forum.update(requestDto.getTitle(), requestDto.getContent());
         return forum.getForumId();
+    }
+
+    public ForumsResponseDto findForumWithLikedInfoByForumIdAndUserId(Long id, Long userId) {
+        Forums forum = forumsRepository.findById(id).orElseThrow(
+                () -> new DNACustomException("해당 게시글이 없습니다. id=" + id, DnaStatusCode.INVALID_POST));
+        boolean isForumLikedByUser = (userId != null && forumLikesRepository.findForumLikesByUserIdAndForumId(forum.getForumId(), userId));
+        return new ForumsResponseDto(forum, isForumLikedByUser);
     }
 
     public Forums findById(Long id) {
