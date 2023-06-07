@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @RequiredArgsConstructor
 @Service
 public class ForumsService {
@@ -35,6 +37,8 @@ public class ForumsService {
 
     @Transactional
     public Long save(Forums forums) {
+        if(!hasText(forums.getTitle()) || !hasText(forums.getContent()))
+            throw new DNACustomException("제목이나 내용이 없는 글입니다. 게시글 작성 조건을 확인해주세요.", DnaStatusCode.INVALID_INPUT);
         return forumsRepository.save(forums).getForumId();
     }
 
