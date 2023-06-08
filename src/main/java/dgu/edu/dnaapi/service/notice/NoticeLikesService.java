@@ -1,10 +1,10 @@
-package dgu.edu.dnaapi.service;
+package dgu.edu.dnaapi.service.notice;
 
 import dgu.edu.dnaapi.domain.NoticeLikes;
 import dgu.edu.dnaapi.domain.Notices;
 import dgu.edu.dnaapi.domain.User;
-import dgu.edu.dnaapi.repository.NoticeLikesRepository;
-import dgu.edu.dnaapi.repository.NoticesRepository;
+import dgu.edu.dnaapi.repository.notice.NoticeLikesRepository;
+import dgu.edu.dnaapi.repository.notice.NoticesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

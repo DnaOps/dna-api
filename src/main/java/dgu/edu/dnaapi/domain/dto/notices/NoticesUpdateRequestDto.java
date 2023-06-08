@@ -7,13 +7,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class NoticesUpdateRequestDto {
-    private Long noticeId;
+
     private String title;
     private String content;
 
     @Builder
-    public NoticesUpdateRequestDto(Long noticeId, String title, String content) {
-        this.noticeId = noticeId;
+    public NoticesUpdateRequestDto(String title, String content) {
         this.title = title;
         this.content = content;
     }

@@ -3,6 +3,7 @@ package dgu.edu.dnaapi.domain.response;
 import io.jsonwebtoken.lang.Assert;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.util.MultiValueMap;
@@ -22,5 +23,9 @@ public class ResponseEntity<T> extends HttpEntity<T> {
         super(body);
         Assert.notNull(status, "HttpStatus must not be null");
         this.status = status;
+    }
+
+    public static ResponseEntity<Message> createSuccessResponseMessage(@Nullable Message body) {
+        return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.OK);
     }
 }

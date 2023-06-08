@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Getter
 @NoArgsConstructor
 @Entity
@@ -30,7 +32,7 @@ public class Notices extends BaseEntity {
     @JoinColumn(name = "userId")
     private User author;
 
-    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NoticeComments> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL)
@@ -57,8 +59,10 @@ public class Notices extends BaseEntity {
     }
 
     public void update(String title, String content) {
-        this.title = title;
-        this.content = content;
+        if(hasText(title))
+            this.title = title;
+        if(hasText(content))
+            this.content = content;
     }
 }
 

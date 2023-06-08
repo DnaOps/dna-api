@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.service;
+package dgu.edu.dnaapi.service.notice;
 
 import dgu.edu.dnaapi.domain.NoticeComments;
 import dgu.edu.dnaapi.domain.Notices;
@@ -9,8 +9,8 @@ import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsSaveDto;
 import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsUpdateDto;
 import dgu.edu.dnaapi.domain.response.DnaStatusCode;
 import dgu.edu.dnaapi.exception.DNACustomException;
-import dgu.edu.dnaapi.repository.NoticesCommentsRepository;
-import dgu.edu.dnaapi.repository.NoticesRepository;
+import dgu.edu.dnaapi.repository.notice.NoticeCommentsRepository;
+import dgu.edu.dnaapi.repository.notice.NoticesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class NoticeCommentsService {
     private final NoticesRepository noticesRepository;
-    private final NoticesCommentsRepository noticesCommentsRepository;
+    private final NoticeCommentsRepository noticeCommentsRepository;
 
     @Transactional
     public Long save(User user, NoticeCommentsSaveDto requestDto) {
@@ -37,18 +37,18 @@ public class NoticeCommentsService {
 
         if(requestDto.getParentCommentId() != null) {
             Long parentCommentId = requestDto.getParentCommentId();
-            NoticeComments parent = noticesCommentsRepository.findById(parentCommentId).orElseThrow(
+            NoticeComments parent = noticeCommentsRepository.findById(parentCommentId).orElseThrow(
                     () -> new DNACustomException("해당 댓글이 없습니다. id=" + parentCommentId, DnaStatusCode.INVALID_COMMENT));
             comment.registerParent(parent);
         }
         noticesRepository.increaseCommentCount(noticeId);
-        return noticesCommentsRepository.save(comment).getCommentId();
+        return noticeCommentsRepository.save(comment).getCommentId();
     }
 
     @Transactional
     public Long update(Long userId, NoticeCommentsUpdateDto requestDto) {
         Long id = requestDto.getCommentId();
-        NoticeComments comment = noticesCommentsRepository.findById(id).orElseThrow(
+        NoticeComments comment = noticeCommentsRepository.findById(id).orElseThrow(
                 () -> new DNACustomException("해당 댓글이 없습니다. id=" + id, DnaStatusCode.INVALID_COMMENT));
 
         if(!comment.getAuthor().getId().equals(userId)) {
@@ -59,7 +59,7 @@ public class NoticeCommentsService {
     }
 
     public NoticeCommentsResponseDto findById(Long id) {
-        NoticeComments entity = noticesCommentsRepository.findById(id).orElseThrow(
+        NoticeComments entity = noticeCommentsRepository.findById(id).orElseThrow(
                 () -> new DNACustomException("해당 댓글이 없습니다. id=" + id, DnaStatusCode.INVALID_COMMENT));
         return new NoticeCommentsResponseDto(entity);
     }
@@ -68,18 +68,18 @@ public class NoticeCommentsService {
     public Long delete(Long userId, NoticeCommentsDeleteDto requestDto) {
         // todo 나중에 대댓글 삭제 조건 처리 등 추가 해야함
         Long deleteId = requestDto.getCommentId();
-        NoticeComments comment = noticesCommentsRepository.findById(deleteId).orElseThrow(
+        NoticeComments comment = noticeCommentsRepository.findById(deleteId).orElseThrow(
                 () -> new DNACustomException("해당 댓글이 없습니다. id=" + deleteId, DnaStatusCode.INVALID_COMMENT));
         if(!comment.getAuthor().getId().equals(userId)) {
             throw new DNACustomException("작성자만 댓글을 삭제할 수 있습니다.", DnaStatusCode.INVALID_AUTHOR);
         }
         noticesRepository.decreaseCommentCount(comment.getNotice().getNoticeId());
-        noticesCommentsRepository.deleteById(deleteId);
+        noticeCommentsRepository.deleteById(deleteId);
         return deleteId;
     }
 
     public List<NoticeCommentsResponseDto> findAll(Long noticeId) {
-        List<NoticeComments> commentsList = noticesCommentsRepository.findAll();
+        List<NoticeComments> commentsList = noticeCommentsRepository.findAll();
         return commentsList.stream()
                 .filter(c -> c.getNotice().getNoticeId().equals(noticeId))
                 .map(NoticeCommentsResponseDto::new).collect(Collectors.toList());

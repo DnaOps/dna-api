@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.repository;
+package dgu.edu.dnaapi.repository.notice;
 
 import dgu.edu.dnaapi.domain.Notices;
 import io.swagger.models.auth.In;
@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface NoticesRepository extends JpaRepository<Notices, Long> {
+public interface NoticesRepository extends JpaRepository<Notices, Long>, NoticesRepositoryCustom {
 
     @Override
     @EntityGraph(attributePaths = {"author"}, type = EntityGraph.EntityGraphType.FETCH)

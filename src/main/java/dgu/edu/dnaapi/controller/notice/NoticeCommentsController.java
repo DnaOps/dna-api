@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.controller;
+package dgu.edu.dnaapi.controller.notice;
 
 import dgu.edu.dnaapi.annotation.JwtRequired;
 import dgu.edu.dnaapi.domain.User;
@@ -7,7 +7,7 @@ import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsResponseDto;
 import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsSaveDto;
 import dgu.edu.dnaapi.domain.dto.noticeComments.NoticeCommentsUpdateDto;
 import dgu.edu.dnaapi.domain.response.*;
-import dgu.edu.dnaapi.service.NoticeCommentsService;
+import dgu.edu.dnaapi.service.notice.NoticeCommentsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

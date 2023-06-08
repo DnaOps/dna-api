@@ -11,26 +11,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class NoticesResponseDto {
-    private Long noticeId;
-    private String title;
-    private String content;
-    private String author;
-    private Long authorId;
-    private int commentCount;
-    private int likeCount;
-    private int level;
-    private String modifiedAt;
+public class NoticesResponseDto extends NoticesMetaDataResponseDto{
 
-    public NoticesResponseDto(Notices entity) {
-        this.noticeId = entity.getNoticeId();
-        this.title = entity.getTitle();
+    private String content;
+    private Boolean isLikedByUser;
+
+    public NoticesResponseDto(Notices entity, Boolean isLikedByUser) {
+        super(entity);
         this.content = entity.getContent();
-        this.author = entity.getAuthor().getUserName();
-        this.authorId = entity.getAuthor().getId();
-        this.commentCount = entity.getComments().size();
-        this.modifiedAt = entity.getLastModifiedDate().toString();
-        this.likeCount = entity.getLikes().size();
-        this.level = entity.getAuthor().getLevel();
+        this.isLikedByUser = isLikedByUser;
     }
 }

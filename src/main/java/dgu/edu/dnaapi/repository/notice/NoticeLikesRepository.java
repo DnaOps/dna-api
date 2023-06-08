@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.repository;
+package dgu.edu.dnaapi.repository.notice;
 
 import dgu.edu.dnaapi.domain.NoticeLikes;
 import dgu.edu.dnaapi.domain.Notices;
