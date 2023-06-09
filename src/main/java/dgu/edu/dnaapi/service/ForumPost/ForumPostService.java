@@ -13,7 +13,7 @@ import dgu.edu.dnaapi.repository.forumPost.ForumPostCommentLikeRepository;
 import dgu.edu.dnaapi.repository.forumPost.ForumPostCommentRepository;
 import dgu.edu.dnaapi.repository.forumPost.ForumPostLikeRepository;
 import dgu.edu.dnaapi.repository.forumPost.ForumPostRepository;
-import dgu.edu.dnaapi.service.ForumPost.vo.ForumPostCommentVO;
+import dgu.edu.dnaapi.service.vo.PostCommentVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -79,16 +79,16 @@ public class ForumPostService {
 
         if(!allCommentIds.isEmpty()){
             List<ForumPostComment> forumPostCommentList = forumPostCommentRepository.findAllForumPostCommentsByForumPostId(deleteForumId);
-            List<ForumPostCommentVO> forumCommentHierarchyStructure = createForumPostCommentHierarchyStructure(convertToForumPostCommentVOList(forumPostCommentList));
+            List<PostCommentVO> forumCommentHierarchyStructure = createForumPostCommentHierarchyStructure(convertForumPostCommentListToPostCommentVOList(forumPostCommentList));
             deleteAllMyChildForumPostComments(forumCommentHierarchyStructure);
         }
         forumPostLikeRepository.deleteAllForumPostLikesByForumPostId(deleteForumId);
-        forumPostRepository.deleteForumPostByForumId(deleteForumId);
+        forumPostRepository.deleteForumPostByForumPostId(deleteForumId);
         return deleteForumId;
     }
 
-    private List<ForumPostCommentVO> convertToForumPostCommentVOList(List<ForumPostComment> forumPostCommentList) {
-        return forumPostCommentList.stream().map(ForumPostCommentVO::convertToForumPostCommentVO).collect(Collectors.toList());
+    private List<PostCommentVO> convertForumPostCommentListToPostCommentVOList(List<ForumPostComment> forumPostCommentList) {
+        return forumPostCommentList.stream().map(PostCommentVO::convertToPostCommentVO).collect(Collectors.toList());
     }
 
     public ListResponse findAllForumPostMetaDataWithCondition(PostSearchCondition condition, Pageable pageable) {
@@ -104,10 +104,10 @@ public class ForumPostService {
                         .build();
     }
 
-    private List<ForumPostCommentVO> createForumPostCommentHierarchyStructure(List<ForumPostCommentVO> forumPostCommentVO){
-        List<ForumPostCommentVO> result = new ArrayList<>();
-        Map<Long, ForumPostCommentVO> replyCommentMap = new HashMap<>();
-        forumPostCommentVO.stream().forEach(
+    private List<PostCommentVO> createForumPostCommentHierarchyStructure(List<PostCommentVO> postCommentVO){
+        List<PostCommentVO> result = new ArrayList<>();
+        Map<Long, PostCommentVO> replyCommentMap = new HashMap<>();
+        postCommentVO.stream().forEach(
                 c -> {
                     replyCommentMap.put(c.getCommentId(), c);
                     if (c.hasParentComment()) replyCommentMap.get(c.getParentCommentId()).addChild(c);
@@ -116,8 +116,8 @@ public class ForumPostService {
         return result;
     }
 
-    private void deleteAllMyChildForumPostComments(List<ForumPostCommentVO> forumComments){
-        for (ForumPostCommentVO forumComment : forumComments) {
+    private void deleteAllMyChildForumPostComments(List<PostCommentVO> forumComments){
+        for (PostCommentVO forumComment : forumComments) {
             deleteAllMyChildForumPostComments(forumComment.getChildrenComment());
 //            System.out.println("DELETE => " + forumComment.getCommentId());
             forumPostCommentRepository.deleteForumPostCommentByForumPostCommentId(forumComment.getCommentId());

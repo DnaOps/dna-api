@@ -3,7 +3,6 @@ package dgu.edu.dnaapi.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,14 +10,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Getter
 @NoArgsConstructor
 @Entity
 @Builder
-public class Notices extends BaseEntity {
+public class NoticePost extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long noticeId;
+    private Long noticePostId;
 
     @Column(nullable = false)
     private String title;
@@ -30,11 +31,11 @@ public class Notices extends BaseEntity {
     @JoinColumn(name = "userId")
     private User author;
 
-    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<NoticeComments> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "noticePost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NoticePostComment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL)
-    private Set<NoticeLikes> likes = new HashSet<>();
+    @OneToMany(mappedBy = "noticePost", cascade = CascadeType.ALL)
+    private Set<NoticePostLike> likes = new HashSet<>();
 
     @Column(columnDefinition = "int default 0", nullable = false)
     @Builder.Default
@@ -44,9 +45,9 @@ public class Notices extends BaseEntity {
     @Builder.Default
     private int commentCount = 0;
 
-    public Notices(Long noticeId, String title, String content, User author, List<NoticeComments> comments,
-                                                    Set<NoticeLikes> likes, int likeCount, int commentCount) {
-        this.noticeId = noticeId;
+    public NoticePost(Long noticePostId, String title, String content, User author, List<NoticePostComment> comments,
+                      Set<NoticePostLike> likes, int likeCount, int commentCount) {
+        this.noticePostId = noticePostId;
         this.title = title;
         this.content = content;
         this.author = author;
@@ -57,8 +58,10 @@ public class Notices extends BaseEntity {
     }
 
     public void update(String title, String content) {
-        this.title = title;
-        this.content = content;
+        if(hasText(title))
+            this.title = title;
+        if(hasText(content))
+            this.content = content;
     }
 }
 

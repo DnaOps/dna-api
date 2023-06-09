@@ -11,7 +11,7 @@ import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.forumPost.ForumPostCommentLikeRepository;
 import dgu.edu.dnaapi.repository.forumPost.ForumPostCommentRepository;
 import dgu.edu.dnaapi.repository.forumPost.ForumPostRepository;
-import dgu.edu.dnaapi.service.ForumPost.vo.ForumPostCommentVO;
+import dgu.edu.dnaapi.service.vo.PostCommentVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class ForumPostCommentService {
             ForumPostComment parent = forumPostCommentRepository.findWithForumPostByForumPostCommentId(parentCommentId).orElseThrow(
                     () -> new DNACustomException("해당 댓글이 없습니다. id=" + parentCommentId, DnaStatusCode.INVALID_COMMENT));
             if(parent.getForumPost().getForumPostId() != forumPostId)
-                    throw new DNACustomException("대댓글 부모 연관관계가 잘못되었습니다.", DnaStatusCode.INVALID_COMMENT);
+                throw new DNACustomException("대댓글 부모 연관관계가 잘못되었습니다.", DnaStatusCode.INVALID_COMMENT);
 
             comment.registerParentForumPostComment(parent);
         }
@@ -83,20 +83,20 @@ public class ForumPostCommentService {
         }
         List<ForumPostComment> allReplyComments = forumPostCommentRepository.findAllReplyForumPostCommentsByCommentGroupId(comment.getForumPost().getForumPostId(), commentGroupId);
         forumPostCommentList.addAll(allReplyComments);
-        List<ForumPostCommentVO> forumPostCommentVOList = forumPostCommentList.stream().map(ForumPostCommentVO::convertToForumPostCommentVO).collect(Collectors.toList());
+        List<PostCommentVO> postCommentVOList = forumPostCommentList.stream().map(PostCommentVO::convertToPostCommentVO).collect(Collectors.toList());
 
-        Map<Long, ForumPostCommentVO> forumCommentsMap = createForumPostCommentHierarchyStructure(forumPostCommentVOList);
+        Map<Long, PostCommentVO> forumCommentsMap = createForumPostCommentHierarchyStructure(postCommentVOList);
 
-        ForumPostCommentVO deletedForumPostCommentVO = forumCommentsMap.get(deleteForumPostCommentId);
-        deletedForumPostCommentVO.setDeletedStatus();
-        if (checkAllMyChildForumPostCommentIsDeleted(deletedForumPostCommentVO.getChildrenComment())){
+        PostCommentVO deletedPostCommentVO = forumCommentsMap.get(deleteForumPostCommentId);
+        deletedPostCommentVO.setDeletedStatus();
+        if (checkAllMyChildForumPostCommentIsDeleted(deletedPostCommentVO.getChildrenComment())){
             forumPostCommentRepository.deleteById(deleteForumPostCommentId);
         }else{
             forumPostCommentRepository.softDelete(deleteForumPostCommentId);
         }
         forumPostCommentLikeRepository.deleteAllForumPostCommentLikesByForumPostCommentId(deleteForumPostCommentId);
-        if(deletedForumPostCommentVO.hasParentComment())
-            shouldParentCommentBeDeleted(forumCommentsMap, deletedForumPostCommentVO.getParentCommentId());
+        if(deletedPostCommentVO.hasParentComment())
+            shouldParentCommentBeDeleted(forumCommentsMap, deletedPostCommentVO.getParentCommentId());
 
         return deleteForumPostCommentId;
     }
@@ -151,9 +151,9 @@ public class ForumPostCommentService {
         return result;
     }
 
-    private Map<Long, ForumPostCommentVO> createForumPostCommentHierarchyStructure(List<ForumPostCommentVO> forumPostCommentVO){
-        Map<Long, ForumPostCommentVO> commentsMap = new HashMap<>();
-        forumPostCommentVO.stream().forEach(
+    private Map<Long, PostCommentVO> createForumPostCommentHierarchyStructure(List<PostCommentVO> postCommentVO){
+        Map<Long, PostCommentVO> commentsMap = new HashMap<>();
+        postCommentVO.stream().forEach(
                 c -> {
                     commentsMap.put(c.getCommentId(), c);
                     if(commentsMap.containsKey(c.getParentCommentId())) commentsMap.get(c.getParentCommentId()).addChild(c);
@@ -162,19 +162,19 @@ public class ForumPostCommentService {
         return commentsMap;
     }
 
-    private boolean checkAllMyChildForumPostCommentIsDeleted(List<ForumPostCommentVO> forumComments){
-        for (ForumPostCommentVO forumPostCommentVO : forumComments) {
-            if (!forumPostCommentVO.isDeleted()) {
+    private boolean checkAllMyChildForumPostCommentIsDeleted(List<PostCommentVO> forumComments){
+        for (PostCommentVO postCommentVO : forumComments) {
+            if (!postCommentVO.isDeleted()) {
                 return false;
             }
-            if(!checkAllMyChildForumPostCommentIsDeleted(forumPostCommentVO.getChildrenComment())){
+            if(!checkAllMyChildForumPostCommentIsDeleted(postCommentVO.getChildrenComment())){
                 return false;
             }
         }
         return true;
     }
 
-    private void dfs(List<ForumPostCommentVO> forumComments){
+    private void dfs(List<PostCommentVO> forumComments){
         System.out.println("forumComments.size() = " + forumComments.size());
         for(int i = 0; i < forumComments.size(); ++i){
             System.out.println(" i + forumComments.get(i).getCommentId() + forumComments.get(i).isDeleted() = " +  i + forumComments.get(i).getCommentId() + forumComments.get(i).isDeleted());
@@ -182,9 +182,9 @@ public class ForumPostCommentService {
         }
     }
 
-    private void shouldParentCommentBeDeleted(Map<Long, ForumPostCommentVO> forumCommentsMap, Long parentCommentId){
+    private void shouldParentCommentBeDeleted(Map<Long, PostCommentVO> forumCommentsMap, Long parentCommentId){
         if(forumCommentsMap.containsKey(parentCommentId)){
-            ForumPostCommentVO parentComment = forumCommentsMap.get(parentCommentId);
+            PostCommentVO parentComment = forumCommentsMap.get(parentCommentId);
             if(parentComment.isDeleted() && checkAllMyChildForumPostCommentIsDeleted(parentComment.getChildrenComment())){
                 forumPostCommentRepository.deleteById(parentCommentId);
                 if(parentComment.hasParentComment())

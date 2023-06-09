@@ -8,60 +8,65 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Getter
 @NoArgsConstructor
 @Entity
-public class NoticeComments extends BaseEntity {
+public class NoticePostComment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    private Long noticePostCommentId;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parentId")
-    private NoticeComments parent;
+    private NoticePostComment parent;
 
-    private Long parentCommentId;
+    private Long commentGroupId;
 
     @OneToMany(mappedBy = "parent")
-    private List<NoticeComments> childList = new ArrayList<>();
+    private List<NoticePostComment> childList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "noticeId", nullable = false)
-    private Notices notice;
+    private NoticePost noticePost;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId") // todo: 고민 nullable true or false?
     private User author;
 
     private int likeCount;
+    private boolean isDeleted = false;
 
     @Builder
-    public NoticeComments(Notices notice, User author, String content, NoticeComments parent, Long parentCommentId, int likeCount) {
-        this.notice = notice;
+    public NoticePostComment(NoticePost noticePost, User author, String content, NoticePostComment parent, Long commentGroupId, int likeCount, boolean isDeleted) {
+        this.noticePost = noticePost;
         this.author = author;
         this.content = content;
         this.parent = parent;
-        this.parentCommentId = parentCommentId;
+        this.commentGroupId = commentGroupId;
         this.likeCount = likeCount;
+        this.isDeleted = isDeleted;
     }
 
-    public void addChild(NoticeComments child){
+    public void addChild(NoticePostComment child){
         childList.add(child);
     }
 
     public void update(String content) {
-        this.content = content;
+        if(hasText(content))
+            this.content = content;
     }
 
-    public void registerNotice(Notices notice) {
-        this.notice = notice;
-        notice.getComments().add(this);
+    public void registerNoticePost(NoticePost noticePost) {
+        this.noticePost = noticePost;
+        noticePost.getComments().add(this);
     }
-    public void registerParent(NoticeComments parent) {
+    public void registerParentNoticeComment(NoticePostComment parent) {
         this.parent = parent;
         parent.addChild(this);
     }

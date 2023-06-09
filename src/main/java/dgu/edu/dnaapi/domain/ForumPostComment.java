@@ -8,6 +8,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -57,7 +59,8 @@ public class ForumPostComment extends BaseEntity{
     }
 
     public void update(String content) {
-        this.content = content;
+        if(hasText(content))
+            this.content = content;
     }
 
     public void registerForumPost(ForumPost forumPost) {
