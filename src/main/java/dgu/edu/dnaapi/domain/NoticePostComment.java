@@ -10,42 +10,41 @@ import java.util.List;
 
 import static org.springframework.util.StringUtils.hasText;
 
-@Entity
-@NoArgsConstructor
 @Getter
-public class ForumPostComment extends BaseEntity{
+@NoArgsConstructor
+@Entity
+public class NoticePostComment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long forumPostCommentId;
+    private Long noticePostCommentId;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parentId")
-    private ForumPostComment parent;
+    private NoticePostComment parent;
 
     private Long commentGroupId;
 
     @OneToMany(mappedBy = "parent")
-    private List<ForumPostComment> childList = new ArrayList<>();
+    private List<NoticePostComment> childList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "forumPostId", nullable = false)
-    private ForumPost forumPost;
+    @JoinColumn(name = "noticeId", nullable = false)
+    private NoticePost noticePost;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId") // todo: 고민 nullable true or false?
     private User author;
 
     private int likeCount;
-
     private boolean isDeleted = false;
 
     @Builder
-    public ForumPostComment(ForumPost forumPost, User author, String content, ForumPostComment parent, Long commentGroupId, int likeCount, boolean isDeleted) {
-        this.forumPost = forumPost;
+    public NoticePostComment(NoticePost noticePost, User author, String content, NoticePostComment parent, Long commentGroupId, int likeCount, boolean isDeleted) {
+        this.noticePost = noticePost;
         this.author = author;
         this.content = content;
         this.parent = parent;
@@ -54,7 +53,7 @@ public class ForumPostComment extends BaseEntity{
         this.isDeleted = isDeleted;
     }
 
-    public void addChild(ForumPostComment child){
+    public void addChild(NoticePostComment child){
         childList.add(child);
     }
 
@@ -63,11 +62,11 @@ public class ForumPostComment extends BaseEntity{
             this.content = content;
     }
 
-    public void registerForumPost(ForumPost forumPost) {
-        this.forumPost = forumPost;
-        forumPost.getComments().add(this);
+    public void registerNoticePost(NoticePost noticePost) {
+        this.noticePost = noticePost;
+        noticePost.getComments().add(this);
     }
-    public void registerParentForumPostComment(ForumPostComment parent) {
+    public void registerParentNoticeComment(NoticePostComment parent) {
         this.parent = parent;
         parent.addChild(this);
     }

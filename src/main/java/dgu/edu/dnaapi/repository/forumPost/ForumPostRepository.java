@@ -33,5 +33,5 @@ public interface ForumPostRepository extends JpaRepository<ForumPost, Long>, For
 
     @Modifying(clearAutomatically = true)
     @Query("DELETE FROM ForumPost f WHERE f.forumPostId = :forumPostId")
-    int deleteForumPostByForumId(@Param("forumPostId") Long forumPostId);
+    int deleteForumPostByForumPostId(@Param("forumPostId") Long forumPostId);
 }
