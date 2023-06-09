@@ -24,6 +24,8 @@ public enum DnaStatusCode {
     INVALID_COMMENT(404, "N102", "No comment has that information, Please check your request"),
     INVALID_SEARCH_OPTION(404, "N103", "Invalid search option, pleas check your search criteria or keywords"),
     INVALID_DELETE_COMMENT(404, "N104", "Check your Deleted CommentId"),
+    INVALID_LIKE_OPERATION(404, "N105", "Check your like operation condition"),
+
 
     /**
      * Auth Exception
