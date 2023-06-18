@@ -49,4 +49,9 @@ public class UserService {
         return userRepository.findUserByEmail(email)
                 .orElseThrow(()-> new DNACustomException("해당 회원이 없습니다.", DnaStatusCode.INVALID_USER));
     }
+
+    public User getUserByUserId(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(()-> new DNACustomException("해당 회원이 없습니다.", DnaStatusCode.INVALID_USER));
+    }
 }

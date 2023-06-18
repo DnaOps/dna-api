@@ -12,4 +12,9 @@ public class DNACustomException extends RuntimeException {
         super(errorMessage);
         this.errorCode = errorCode;
     }
+
+    public DNACustomException(DnaStatusCode errorCode) {
+        super(errorCode.getErrorMessage());
+        this.errorCode = errorCode;
+    }
 }
