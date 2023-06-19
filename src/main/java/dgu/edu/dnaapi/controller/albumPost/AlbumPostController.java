@@ -1,12 +1,12 @@
 package dgu.edu.dnaapi.controller.albumPost;
 
-import dgu.edu.dnaapi.annotation.JwtRequired;
 import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.controller.dto.PostSearchCondition;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.dto.albumPost.AlbumPostResponseDto;
 import dgu.edu.dnaapi.domain.dto.albumPost.AlbumPostSaveRequestDto;
-import dgu.edu.dnaapi.domain.dto.noticePost.NoticePostUpdateRequestDto;
+import dgu.edu.dnaapi.domain.dto.albumPost.AlbumPostUpdateRequestDto;
+
 import dgu.edu.dnaapi.domain.response.DnaStatusCode;
 import dgu.edu.dnaapi.domain.response.ListResponse;
 import dgu.edu.dnaapi.domain.response.Message;
@@ -42,7 +42,6 @@ public class AlbumPostController {
             @RequestPart(value = "images", required = false) List<MultipartFile> albumPostImages,
             HttpServletRequest request
     ) throws IOException {
-
         User findUser = getUserFromToken(request);
 
         if(albumPostImages == null)
@@ -58,7 +57,6 @@ public class AlbumPostController {
         String authorizationHeader = request.getHeader(JwtProperties.HEADER_STRING);
         if(!hasText(authorizationHeader))
             throw new DNACustomException(DnaStatusCode.TOKEN_INVALID);
-
         User findUser = userService.getUserByUserId(tokenService.getUserId(authorizationHeader));
         return findUser;
     }
@@ -79,19 +77,20 @@ public class AlbumPostController {
             @PageableDefault(size = 13, sort = "albumPostId", direction = Sort.Direction.DESC) Pageable pageable,
             PostSearchCondition condition
     ) {
-        ListResponse listResponse = albumPostService.findAllNoticesMetaDataWithCondition(condition, pageable);
+        ListResponse listResponse = albumPostService.findAllAlbumPostMetaDataWithCondition(condition, pageable);
         Message message = Message.createSuccessMessage(listResponse);
         return ResponseEntity.createSuccessResponseMessage(message);
     }
 
     @PutMapping("/albumPosts/{albumPostId}")
     public ResponseEntity<Message> update(
-            @RequestBody NoticePostUpdateRequestDto requestDto,
-            @PathVariable("albumPostId") Long noticePostId,
+            @RequestPart("albumPost") AlbumPostUpdateRequestDto requestDto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> albumPostImages,
+            @PathVariable("albumPostId") Long albumPostId,
             HttpServletRequest request
-    ) {
+    ) throws IOException {
         User findUser = getUserFromToken(request);
-        Long updateId = albumPostService.update(requestDto, noticePostId, findUser.getId());
+        Long updateId = albumPostService.update(requestDto, albumPostId, findUser, albumPostImages);
         Message message = Message.createSuccessMessage(updateId);
         return ResponseEntity.createSuccessResponseMessage(message);
     }

@@ -1,5 +1,6 @@
 package dgu.edu.dnaapi.service.vo;
 
+import dgu.edu.dnaapi.domain.AlbumPostComment;
 import dgu.edu.dnaapi.domain.ForumPostComment;
 import dgu.edu.dnaapi.domain.NoticePostComment;
 import lombok.Getter;
@@ -29,6 +30,11 @@ public class PostCommentVO {
     public static PostCommentVO convertToPostCommentVO(NoticePostComment noticePostComment){
         Long parentCommentId = ((noticePostComment.getParent() != null) ? noticePostComment.getParent().getNoticePostCommentId() : null);
         return new PostCommentVO(noticePostComment.getNoticePostCommentId(), noticePostComment.isDeleted(), new ArrayList<>(), parentCommentId);
+    }
+
+    public static PostCommentVO convertToPostCommentVO(AlbumPostComment noticePostComment){
+        Long parentCommentId = ((noticePostComment.getParent() != null) ? noticePostComment.getParent().getAlbumPostCommentId() : null);
+        return new PostCommentVO(noticePostComment.getAlbumPostCommentId(), noticePostComment.getIsDeleted(), new ArrayList<>(), parentCommentId);
     }
 
     public void addChild(PostCommentVO postCommentVO){

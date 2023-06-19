@@ -17,6 +17,7 @@ public class AlbumPostMetaDataResponseDto {
     private int likeCount;
     private int level;
     private String modifiedAt;
+    private String thumbnailImage;
 
     public AlbumPostMetaDataResponseDto(AlbumPost entity) {
         this.albumPostId = entity.getAlbumPostId();
@@ -27,10 +28,11 @@ public class AlbumPostMetaDataResponseDto {
         this.modifiedAt = entity.getLastModifiedDate().toString();
         this.likeCount = entity.getLikeCount();
         this.level = entity.getAuthor().getLevel();
+        this.thumbnailImage = entity.getThumbnailImage();
     }
 
     @QueryProjection
-    public AlbumPostMetaDataResponseDto(Long albumPostId, String title, String author, Long authorId, int commentCount, int likeCount, int level, LocalDateTime modifiedAt) {
+    public AlbumPostMetaDataResponseDto(Long albumPostId, String title, String author, Long authorId, int commentCount, int likeCount, int level, LocalDateTime modifiedAt, String thumbnailImage) {
         this.albumPostId = albumPostId;
         this.title = title;
         this.author = author;
@@ -39,5 +41,6 @@ public class AlbumPostMetaDataResponseDto {
         this.likeCount = likeCount;
         this.level = level;
         this.modifiedAt = modifiedAt.toString();
+        this.thumbnailImage = thumbnailImage;
     }
 }

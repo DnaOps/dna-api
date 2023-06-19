@@ -71,7 +71,7 @@ public class AlbumPostComment extends BaseEntity {
         this.albumPost = albumPost;
         albumPost.getComments().add(this);
     }
-    public void registerParentNoticeComment(AlbumPostComment parent) {
+    public void registerParentAlbumPostComment(AlbumPostComment parent) {
         this.parent = parent;
         parent.addChild(this);
     }

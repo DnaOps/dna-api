@@ -28,7 +28,7 @@ public class AmazonS3Service implements AlbumPostImageService {
     public String bucketName;
 
     @Transactional
-    public String upload(MultipartFile file, String dirName) throws IOException {
+    public AmazonS3ObjectInfo upload(MultipartFile file, String dirName) throws IOException {
 
         if(!hasText(file.getOriginalFilename()) || !isValidateFileExtension(getFileExtension(file.getOriginalFilename())))
             throw new DNACustomException(DnaStatusCode.INVALID_File_Format);
@@ -39,7 +39,7 @@ public class AmazonS3Service implements AlbumPostImageService {
         try(InputStream inputStream = file.getInputStream()) {
             amazonS3Client.putObject(new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
-            return amazonS3Client.getUrl(bucketName, fileName).toString();
+            return new AmazonS3ObjectInfo(fileName,amazonS3Client.getUrl(bucketName, fileName).toString());
         } catch(IOException e) {
             throw new DNACustomException(DnaStatusCode.AMAZONS3_IO_EXCEPTION);
         }
@@ -69,7 +69,11 @@ public class AmazonS3Service implements AlbumPostImageService {
         return true;
     }
 
-    public void delete(String imageUrl) {
-        amazonS3Client.deleteObject(bucketName, imageUrl);
+    public void delete(String imageKey) {
+        try {
+            amazonS3Client.deleteObject(bucketName, imageKey);
+        } catch (Exception e) {
+            throw new DNACustomException(e.getMessage(), DnaStatusCode.AMAZONS3_IO_EXCEPTION);
+        }
     }
 }

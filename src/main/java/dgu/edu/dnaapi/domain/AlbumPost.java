@@ -64,20 +64,16 @@ public class AlbumPost extends BaseEntity {
         this.thumbnailImage = thumbnailImage;
     }
 
-    public void update(String title, String content, List<AlbumPostImage> postImages, String thumbnailImage) {
+    public void update(String title, String content, String thumbnailImage) {
         if(hasText(title))
             this.title = title;
         if(hasText(content))
             this.content = content;
-        if(!postImages.isEmpty())
-            this.albumPostImages = postImages;
         if(hasText(thumbnailImage))
             this.thumbnailImage = thumbnailImage;
     }
 
     public void addAlbumPostImages(List<AlbumPostImage> albumPostImages) {
-        System.out.println("albumPostImages = " + albumPostImages.size());
-        System.out.println("this.albumPostImages = " + this.albumPostImages);
         this.albumPostImages.addAll(albumPostImages);
         for (AlbumPostImage albumPostImage : albumPostImages) {
             albumPostImage.setAlbumPost(this);
