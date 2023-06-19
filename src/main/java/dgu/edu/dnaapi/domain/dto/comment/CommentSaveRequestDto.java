@@ -1,5 +1,6 @@
 package dgu.edu.dnaapi.domain.dto.comment;
 
+import dgu.edu.dnaapi.domain.AlbumPostComment;
 import dgu.edu.dnaapi.domain.ForumPostComment;
 import dgu.edu.dnaapi.domain.NoticePostComment;
 import dgu.edu.dnaapi.domain.User;
@@ -41,5 +42,14 @@ public class CommentSaveRequestDto {
                 .build();
 
         return comments;
+    }
+
+    public AlbumPostComment toAlbumPostComment(User user) {
+        return AlbumPostComment.builder()
+                .content(content)
+                .author(user)
+                .commentGroupId(commentGroupId)
+                .isDeleted(false)
+                .build();
     }
 }

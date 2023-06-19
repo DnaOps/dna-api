@@ -16,12 +16,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import static org.springframework.util.StringUtils.hasText;
 
 @Component
 public class TokenProvider implements InitializingBean {
@@ -123,7 +124,7 @@ public class TokenProvider implements InitializingBean {
 
     /**토큰 정보 추출 */
     public String resolveToken(String authorizationHeaderValue){
-        if(StringUtils.hasText(authorizationHeaderValue) && authorizationHeaderValue.startsWith("Bearer ")){
+        if(hasText(authorizationHeaderValue) && authorizationHeaderValue.startsWith("Bearer ")){
             return authorizationHeaderValue.substring(7);
         }
         return null;

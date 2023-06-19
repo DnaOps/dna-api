@@ -25,6 +25,8 @@ public enum DnaStatusCode {
     INVALID_SEARCH_OPTION(404, "N103", "Invalid search option, pleas check your search criteria or keywords"),
     INVALID_DELETE_COMMENT(404, "N104", "Check your Deleted CommentId"),
     INVALID_LIKE_OPERATION(404, "N105", "Check your like operation condition"),
+    INVALID_File_Format(404, "N106", "Check your input file format, We don't support the file format"),
+
 
 
     /**
@@ -47,6 +49,7 @@ public enum DnaStatusCode {
     /**
      * Server Error Exception
      **/
+    AMAZONS3_IO_EXCEPTION(500, "N400", "S3 Server Problem, Check your Infra configuration"),
 
 
 
