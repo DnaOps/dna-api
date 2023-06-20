@@ -1,9 +1,6 @@
 package dgu.edu.dnaapi.domain.dto.comment;
 
-import dgu.edu.dnaapi.domain.AlbumPostComment;
-import dgu.edu.dnaapi.domain.ForumPostComment;
-import dgu.edu.dnaapi.domain.NoticePostComment;
-import dgu.edu.dnaapi.domain.User;
+import dgu.edu.dnaapi.domain.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,6 +43,15 @@ public class CommentSaveRequestDto {
 
     public AlbumPostComment toAlbumPostComment(User user) {
         return AlbumPostComment.builder()
+                .content(content)
+                .author(user)
+                .commentGroupId(commentGroupId)
+                .isDeleted(false)
+                .build();
+    }
+
+    public StudyPostComment toStudyPostComment(User user) {
+        return StudyPostComment.builder()
                 .content(content)
                 .author(user)
                 .commentGroupId(commentGroupId)
