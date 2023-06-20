@@ -1,6 +1,8 @@
 package dgu.edu.dnaapi.aop;
 
 import dgu.edu.dnaapi.domain.User;
+import dgu.edu.dnaapi.domain.response.DnaStatusCode;
+import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.service.UserService;
 import dgu.edu.dnaapi.util.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+
+import static org.springframework.util.StringUtils.hasText;
 
 @Aspect
 @Component
@@ -30,11 +34,17 @@ public class JwtUserAspect {
         HttpServletRequest request = requestAttributes.getRequest();
 
         String token = request.getHeader("Authorization");
+        if(!hasText(token))
+            throw new DNACustomException(DnaStatusCode.TOKEN_INVALID);
+
         String userEmail = tokenProvider.getTokenSubject(token.substring(7));
         User findUser = userService.getUserByEmail(userEmail);
 
+        if(findUser == null)
+            if(!hasText(token))
+                throw new DNACustomException(DnaStatusCode.TOKEN_INVALID);
+
         Object[] args = Arrays.stream(joinPoint.getArgs()).map(data -> {
-            // todo: Object 지우기
             if(data instanceof User) {
                 data = findUser;
             }
