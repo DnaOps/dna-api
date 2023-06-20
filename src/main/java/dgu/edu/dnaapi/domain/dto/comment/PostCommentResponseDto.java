@@ -29,11 +29,11 @@ public class PostCommentResponseDto {
 
     public static PostCommentResponseDto convertAlbumCommentToResponseDto(AlbumPostComment albumPostComment){
         Long parentCommentId = (albumPostComment.getParent() != null) ? albumPostComment.getParent().getAlbumPostCommentId() : null;
-        String comment = ((albumPostComment.getIsDeleted() == true ) ? "삭제된 댓글입니다." : albumPostComment.getContent());
+        String content = ((albumPostComment.getIsDeleted() == true ) ? "삭제된 댓글입니다." : albumPostComment.getContent());
         return PostCommentResponseDto.builder()
                 .commentId(albumPostComment.getAlbumPostCommentId())
                 .commentGroupId(albumPostComment.getCommentGroupId())
-                .content(comment)
+                .content(content)
                 .author(albumPostComment.getAuthor().getUserName())
                 .authorId(albumPostComment.getAuthor().getId())
                 .parentCommentId(parentCommentId)
