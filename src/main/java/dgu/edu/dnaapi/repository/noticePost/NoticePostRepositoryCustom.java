@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface NoticePostRepositoryCustom {
 
     List<NoticePostMetaDataResponseDto> search(PostSearchCondition condition, Pageable pageable);
+    List<NoticePostMetaDataResponseDto> searchPinnedNoticePostMetaData();
     Optional<NoticePost> findWithNoticePostCommentsByNoticePostId(Long noticePostId);
 }

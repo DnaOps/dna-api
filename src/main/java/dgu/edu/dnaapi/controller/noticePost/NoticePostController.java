@@ -4,6 +4,7 @@ import dgu.edu.dnaapi.annotation.JwtRequired;
 import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.controller.dto.PostSearchCondition;
 import dgu.edu.dnaapi.domain.User;
+import dgu.edu.dnaapi.domain.dto.noticePost.NoticePostMetaDataResponse;
 import dgu.edu.dnaapi.domain.dto.noticePost.NoticePostResponseDto;
 import dgu.edu.dnaapi.domain.dto.noticePost.NoticePostSaveRequestDto;
 import dgu.edu.dnaapi.domain.dto.noticePost.NoticePostUpdateRequestDto;
@@ -51,8 +52,9 @@ public class NoticePostController {
             @PageableDefault(size = 13, sort = "noticeId", direction = Sort.Direction.DESC) Pageable pageable,
             PostSearchCondition condition
     ) {
-        ListResponse listResponse = noticePostService.findAllNoticesMetaDataWithCondition(condition, pageable);
-        Message message = Message.createSuccessMessage(listResponse);
+        ListResponse noticePost = noticePostService.findAllNoticesMetaDataWithCondition(condition, pageable);
+        ListResponse pinnedNoticePost = noticePostService.findAllPinnedNoticesMetaDataWithCondition();
+        Message message = Message.createSuccessMessage(new NoticePostMetaDataResponse(pinnedNoticePost, noticePost));
         return ResponseEntity.createSuccessResponseMessage(message);
     }
 
