@@ -45,8 +45,12 @@ public class NoticePost extends BaseEntity {
     @Builder.Default
     private int commentCount = 0;
 
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    @Builder.Default
+    private boolean isPinned = false;
+
     public NoticePost(Long noticePostId, String title, String content, User author, List<NoticePostComment> comments,
-                      Set<NoticePostLike> likes, int likeCount, int commentCount) {
+                      Set<NoticePostLike> likes, int likeCount, int commentCount, boolean isPinned) {
         this.noticePostId = noticePostId;
         this.title = title;
         this.content = content;
@@ -55,13 +59,16 @@ public class NoticePost extends BaseEntity {
         this.likes = likes;
         this.likeCount = likeCount;
         this.commentCount = commentCount;
+        this.isPinned = isPinned;
     }
 
-    public void update(String title, String content) {
+    public void update(String title, String content, Boolean isPinned) {
         if(hasText(title))
             this.title = title;
         if(hasText(content))
             this.content = content;
+        if(isPinned != null)
+            this.isPinned = isPinned;
     }
 }
 

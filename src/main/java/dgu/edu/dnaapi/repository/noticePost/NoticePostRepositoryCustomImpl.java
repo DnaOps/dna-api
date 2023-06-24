@@ -36,15 +36,37 @@ public class NoticePostRepositoryCustomImpl implements NoticePostRepositoryCusto
                         noticePost.commentCount,
                         noticePost.likeCount,
                         noticePost.author.level,
-                        noticePost.lastModifiedDate.as("modifiedAt")))
+                        noticePost.lastModifiedDate.as("modifiedAt"),
+                        noticePost.isPinned))
                 .from(noticePost)
                 .join(noticePost.author, user)
                 .where(
+                        noticePost.isPinned.eq(false),
                         lowerThanLastForumId(condition.getStart()),
                         containKeyword(condition.getTitle(), condition.getContent()),
                         authorNameEq(condition.getAuthor()))
                 .orderBy(noticePost.noticePostId.desc())
                 .limit(pageable.getPageSize() + 1)
+                .fetch();
+    }
+
+    @Override
+    public List<NoticePostMetaDataResponseDto> searchPinnedNoticePostMetaData() {
+        return queryFactory
+                .select(new QNoticePostMetaDataResponseDto(
+                        noticePost.noticePostId,
+                        noticePost.title,
+                        noticePost.author.userName.as("author"),
+                        noticePost.author.id.as("authorId"),
+                        noticePost.commentCount,
+                        noticePost.likeCount,
+                        noticePost.author.level,
+                        noticePost.lastModifiedDate.as("modifiedAt"),
+                        noticePost.isPinned))
+                .from(noticePost)
+                .join(noticePost.author, user)
+                .where(noticePost.isPinned.eq(true))
+                .orderBy(noticePost.noticePostId.desc())
                 .fetch();
     }
 

@@ -11,17 +11,21 @@ import lombok.NoArgsConstructor;
 public class NoticePostSaveRequestDto {
     private String title;
     private String content;
+    private Boolean isPinned;
 
     @Builder
-    public NoticePostSaveRequestDto(String title, String content) {
+    public NoticePostSaveRequestDto(String title, String content, Boolean isPinned) {
         this.title = title;
         this.content = content;
+        this.isPinned = isPinned;
     }
 
     public NoticePost toEntity(User user) {
+        boolean isPinned = getIsPinned() != null && getIsPinned();
         return NoticePost.builder()
                 .title(title)
                 .content(content)
+                .isPinned(isPinned)
                 .author(user)
                 .build();
     }

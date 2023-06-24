@@ -10,10 +10,12 @@ public class NoticePostUpdateRequestDto {
 
     private String title;
     private String content;
+    private Boolean isPinned;
 
     @Builder
-    public NoticePostUpdateRequestDto(String title, String content) {
+    public NoticePostUpdateRequestDto(String title, String content, Boolean isPinned) {
         this.title = title;
         this.content = content;
+        this.isPinned = isPinned;
     }
 }

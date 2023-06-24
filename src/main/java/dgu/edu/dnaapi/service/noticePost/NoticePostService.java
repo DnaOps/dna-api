@@ -54,7 +54,7 @@ public class NoticePostService {
         if (userId != notice.getAuthor().getId()){
             throw new DNACustomException("게시글의 작성자만 수정할 수 있습니다.", DnaStatusCode.INVALID_AUTHOR);
         }
-        notice.update(requestDto.getTitle(), requestDto.getContent());
+        notice.update(requestDto.getTitle(), requestDto.getContent(), requestDto.getIsPinned());
         return updateNoticeId;
     }
 
@@ -116,6 +116,14 @@ public class NoticePostService {
         return ListResponse.builder()
                 .list(noticePostMetaDataResponseDtoList)
                 .hasNext(hasNext)
+                .build();
+    }
+
+    public ListResponse findAllPinnedNoticesMetaDataWithCondition() {
+        List<NoticePostMetaDataResponseDto> noticePostMetaDataResponseDtoList = noticePostRepository.searchPinnedNoticePostMetaData();
+        return ListResponse.builder()
+                .list(noticePostMetaDataResponseDtoList)
+                .hasNext(false)
                 .build();
     }
 
