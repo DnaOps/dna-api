@@ -13,4 +13,5 @@ public interface ForumPostRepositoryCustom {
 
     List<ForumPostMetaDataResponseDto> search(PostSearchCondition condition, Pageable pageable);
     Optional<ForumPost> findWithForumPostCommentsByForumPostId(Long forumPostId);
+    Long getForumPostCountByUserId(Long userId);
 }

@@ -11,4 +11,5 @@ public interface StudyPostCommentRepositoryCustom {
     List<StudyPostComment> findAllReplyStudyPostComments(Long studyPostId, List<Long> commentIds);
     List<StudyPostComment> findAllReplyStudyPostCommentsByCommentGroupId(Long studyPostId, Long commentGroupId);
     List<StudyPostComment> findAllStudyPostCommentsWithStudyPostByStudyPostId(Long studyPostId);
+    Long getStudyPostCommentCountByUserId(Long userId);
 }

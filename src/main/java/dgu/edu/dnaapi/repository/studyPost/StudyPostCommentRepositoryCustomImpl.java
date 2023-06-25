@@ -85,4 +85,13 @@ public class StudyPostCommentRepositoryCustomImpl implements StudyPostCommentRep
                         studyPostComment.createdDate.asc())
                 .fetch();
     }
+
+    @Override
+    public Long getStudyPostCommentCountByUserId(Long userId) {
+        return queryFactory
+                .select(studyPostComment.count())
+                .from(studyPostComment)
+                .where(studyPostComment.author.id.eq(userId))
+                .fetchOne();
+    }
 }

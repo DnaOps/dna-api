@@ -11,4 +11,5 @@ public interface AlbumPostCommentRepositoryCustom {
     List<AlbumPostComment> findAllReplyAlbumPostComments(Long albumPostId, List<Long> commentsId);
     List<AlbumPostComment> findAllReplyAlbumPostCommentsByCommentGroupId(Long albumPostId, Long commentGroupId);
     List<AlbumPostComment> findAllAlbumPostCommentsByAlbumPostId(Long albumPostId);
+    Long getAlbumPostCommentCountByUserId(Long userId);
 }

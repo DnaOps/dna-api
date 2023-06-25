@@ -12,4 +12,5 @@ public interface ForumPostCommentRepositoryCustom {
     List<ForumPostComment> findAllReplyForumPostComments(Long forumPostId, List<Long> commentsId);
     List<ForumPostComment> findAllReplyForumPostCommentsByCommentGroupId(Long forumPostId, Long commentGroupId);
     List<ForumPostComment> findAllForumPostCommentsByForumPostId(Long forumPostId);
+    Long getForumPostCommentCountByUserId(Long userId);
 }

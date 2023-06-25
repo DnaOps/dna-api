@@ -61,7 +61,7 @@ public class NoticePostController {
     @GetMapping("/noticePosts/{noticePostId}")
     public ResponseEntity<Message> findById(
             @PathVariable("noticePostId") Long noticePostId,
-            @RequestHeader(JwtProperties.HEADER_STRING) String headerTokenValue
+            @RequestHeader(value = JwtProperties.HEADER_STRING, required = false) String headerTokenValue
     ) {
         Long userId = hasText(headerTokenValue) ? tokenService.getUserId(headerTokenValue) : null;
         NoticePostResponseDto responseDto = noticePostService.findNoticeWithLikedInfoByNoticeIdAndUserId(noticePostId, userId);

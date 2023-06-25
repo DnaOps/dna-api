@@ -90,4 +90,13 @@ public class AlbumPostCommentRepositoryCustomImpl implements AlbumPostCommentRep
                 )
                 .fetch();
     }
+
+    @Override
+    public Long getAlbumPostCommentCountByUserId(Long userId) {
+        return queryFactory
+                .select(albumPostComment.count())
+                .from(albumPostComment)
+                .where(albumPostComment.author.id.eq(userId))
+                .fetchOne();
+    }
 }

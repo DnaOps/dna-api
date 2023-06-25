@@ -101,4 +101,13 @@ public class StudyPostRepositoryCustomImpl implements StudyPostRepositoryCustom 
                 .where(studyPost.studyPostId.eq(studyPostId))
                 .fetchOne());
     }
+
+    @Override
+    public Long getStudyPostCountByUserId(Long userId) {
+        return queryFactory
+                .select(studyPost.count())
+                .from(studyPost)
+                .where(studyPost.author.id.eq(userId))
+                .fetchOne();
+    }
 }

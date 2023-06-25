@@ -103,4 +103,13 @@ public class AlbumPostRepositoryCustomImpl implements AlbumPostRepositoryCustom 
                 .where(albumPost.albumPostId.eq(albumPostId))
                 .fetchOne());
     }
+
+    @Override
+    public Long getAlbumPostCountByUserId(Long userId) {
+        return queryFactory
+                .select(albumPost.count())
+                .from(albumPost)
+                .where(albumPost.author.id.eq(userId))
+                .fetchOne();
+    }
 }

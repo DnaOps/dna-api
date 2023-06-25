@@ -94,4 +94,13 @@ public class ForumPostRepositoryCustomImpl implements ForumPostRepositoryCustom 
                 .fetchOne());
 
     }
+
+    @Override
+    public Long getForumPostCountByUserId(Long userId) {
+        return queryFactory
+                .select(forumPost.count())
+                .from(forumPost)
+                .where(forumPost.author.id.eq(userId))
+                .fetchOne();
+    }
 }

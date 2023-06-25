@@ -113,4 +113,13 @@ public class NoticePostRepositoryCustomImpl implements NoticePostRepositoryCusto
                 .where(noticePost.noticePostId.eq(noticePostId))
                 .fetchOne());
     }
+
+    @Override
+    public Long getNoticePostCountByUserId(Long userId) {
+        return queryFactory
+                .select(noticePost.count())
+                .from(noticePost)
+                .where(noticePost.author.id.eq(userId))
+                .fetchOne();
+    }
 }

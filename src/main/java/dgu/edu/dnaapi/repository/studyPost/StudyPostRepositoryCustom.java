@@ -13,4 +13,5 @@ public interface StudyPostRepositoryCustom {
     List<StudyPostMetaDataResponseDto> search(PostSearchCondition condition, Pageable pageable);
     Optional<StudyPost> findWithStudyPostCommentsByStudyPostId(Long studyPostId);
     Optional<StudyPost> findWithAuthorByStudyPostId(Long studyPostId);
+    Long getStudyPostCountByUserId(Long userId);
 }

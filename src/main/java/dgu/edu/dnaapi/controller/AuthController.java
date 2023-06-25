@@ -8,6 +8,8 @@ import dgu.edu.dnaapi.domain.dto.auth.*;
 import dgu.edu.dnaapi.domain.response.*;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshToken;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshTokenRepository;
+import dgu.edu.dnaapi.service.PostCommentService;
+import dgu.edu.dnaapi.service.PostService;
 import dgu.edu.dnaapi.service.TokenService;
 import dgu.edu.dnaapi.service.UserService;
 import dgu.edu.dnaapi.util.jwt.TokenProvider;
@@ -18,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/auth/")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -28,9 +29,11 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenService tokenService;
+    private final PostService postService;
+    private final PostCommentService postCommentService;
 
 
-    @PostMapping("/signUp")
+    @PostMapping("/auth/signUp")
     @ApiOperation(value = "회원가입", notes = "회원가입을 진행한다.")
     public ResponseEntity<Message> signUp(@RequestBody SignUpDto signUpInfo) {
         System.out.println("signUpInfo = " + signUpInfo);
@@ -46,7 +49,7 @@ public class AuthController {
     /**
      * 로그인
      * */
-    @PostMapping("/authenticate")
+    @PostMapping("/auth/authenticate")
     @ApiOperation(value = "로그인", notes = "유저의 로그인을 진행한다.")
     public ResponseEntity<Message> authorize(@RequestBody LoginRequestDto loginRequestDto) {
 
@@ -72,23 +75,22 @@ public class AuthController {
                 .exist(false)
                 .build();
 
-        // Todo : 게시글, 댓글 수 가져오기
-        UserDto userResponse = UserDto.builder().username(findUser.getUserName())
-                .createdDate(findUser.getCreatedDate())
-                .role(findUser.getRole())
-                .build();
+        UserDto userResponse = UserDto.builder()
+                                .username(findUser.getUserName())
+                                .createdDate(findUser.getCreatedDate())
+                                .role(findUser.getRole())
+                                .commentCount(postCommentService.getPostCommentCountByUserId(findUser.getId()))
+                                .postCount(postService.getPostCountByUserId(findUser.getId()))
+                                .userId(findUser.getId())
+                                .build();
 
         LoginResponseDto result = new LoginResponseDto(tokenResponse, userResponse);
-
-        Message message = Message.builder()
-                                    .data(result)
-                                    .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
-                                    .build();
+        Message message = Message.createSuccessMessage(result);
 
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
-    @PostMapping("/accessToken")
+    @PostMapping("/auth/accessToken")
     @ApiOperation(value = "AccessToken 발급", notes = "유저의 Refresh Token 을 이용해 Access Token 재발급한다.")
     /**
      *  {
@@ -108,7 +110,7 @@ public class AuthController {
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/auth/logout")
     @ApiOperation(value = "로그아웃", notes = "유저의 로그아웃을 진행한다.")
     public ResponseEntity<Message> logOut(@RequestBody RefreshTokenDto refreshToken) {
         // Todo : 1. accessToken 확인 2. RefreshToken 삭제 (userId 이용) 3. BlackList (유효기간동안 접근시)

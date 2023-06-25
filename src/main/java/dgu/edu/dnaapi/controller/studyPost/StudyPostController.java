@@ -60,7 +60,7 @@ public class StudyPostController {
     @GetMapping("/studyPosts/{studyPostId}")
     public ResponseEntity<Message> findById(
             @PathVariable("studyPostId") Long studyPostId,
-            @RequestHeader(JwtProperties.HEADER_STRING) String headerTokenValue
+            @RequestHeader(value = JwtProperties.HEADER_STRING, required = false) String headerTokenValue
     ) {
         Long userId = hasText(headerTokenValue) ? tokenService.getUserId(headerTokenValue) : null;
         StudyPostResponseDto responseDto = studyPostService.findStudyPostWithLikedInfoByStudyPostIdAndUserId(studyPostId, userId);

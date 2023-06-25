@@ -91,4 +91,13 @@ public class ForumPostCommentRepositoryCustomImpl implements ForumPostCommentRep
                 )
                 .fetch();
     }
+
+    @Override
+    public Long getForumPostCommentCountByUserId(Long userId) {
+        return queryFactory
+                .select(forumPostComment.count())
+                .from(forumPostComment)
+                .where(forumPostComment.author.id.eq(userId))
+                .fetchOne();
+    }
 }

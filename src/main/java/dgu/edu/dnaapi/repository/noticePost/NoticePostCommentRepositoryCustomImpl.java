@@ -90,4 +90,13 @@ public class NoticePostCommentRepositoryCustomImpl implements NoticePostCommentR
                         noticePostComment.createdDate.asc())
                 .fetch();
     }
+
+    @Override
+    public Long getNoticePostCountByUserId(Long userId) {
+        return queryFactory
+                .select(noticePostComment.count())
+                .from(noticePostComment)
+                .where(noticePostComment.author.id.eq(userId))
+                .fetchOne();
+    }
 }

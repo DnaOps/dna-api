@@ -13,4 +13,5 @@ public interface AlbumPostRepositoryCustom {
     Optional<AlbumPost> findWithAlbumPostImagesByAlbumPostId(Long albumPostId);
     List<AlbumPostMetaDataResponseDto> search(PostSearchCondition condition, Pageable pageable);
     Optional<AlbumPost> findWithAlbumPostCommentsByAlbumPostId(Long albumPostId);
+    Long getAlbumPostCountByUserId(Long userId);
 }

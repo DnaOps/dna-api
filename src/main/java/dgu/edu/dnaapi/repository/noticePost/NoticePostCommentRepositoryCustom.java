@@ -11,4 +11,6 @@ public interface NoticePostCommentRepositoryCustom {
     List<NoticePostComment> findAllReplyNoticePostComments(Long noticePostId, List<Long> commentIds);
     List<NoticePostComment> findAllReplyNoticePostCommentsByCommentGroupId(Long noticePostId, Long commentGroupId);
     List<NoticePostComment> findAllNoticePostCommentsWithNoticePostByNoticePostId(Long noticePostId);
+
+    Long getNoticePostCountByUserId(Long userId);
 }
