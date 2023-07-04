@@ -3,6 +3,7 @@ package dgu.edu.dnaapi.service;
 import dgu.edu.dnaapi.config.CustomBCryptPasswordEncoder;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.dto.auth.LoginRequestDto;
+import dgu.edu.dnaapi.domain.dto.auth.UnverifiedUser;
 import dgu.edu.dnaapi.domain.response.DnaStatusCode;
 import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.UserRepository;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -53,5 +55,15 @@ public class UserService {
     public User getUserByUserId(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(()-> new DNACustomException("해당 회원이 없습니다.", DnaStatusCode.INVALID_USER));
+    }
+
+    public List<UnverifiedUser> getUnverifiedUserList() {
+        return userRepository.findAllUnverifiedUser();
+    }
+
+    @Transactional
+    public long authorizeUser(User user) {
+        user.authorizeUser();
+        return user.getId();
     }
 }

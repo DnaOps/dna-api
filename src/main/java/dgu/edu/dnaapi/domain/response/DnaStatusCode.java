@@ -38,6 +38,9 @@ public enum DnaStatusCode {
     INVALID_AUTHOR(403, "N203", "Only Author can do request work, Please Check your authority"),
     INVALID_USER(403, "N204", "No user has that information, Please check your information"),
     INVALID_OAUTH_INFO(403, "N205", "Invalid OAuth"),
+    UNVERIFIED_USER(403, "N206", "INVALID USER, Only authorized users can log in"),
+    UNAUTHORIZED_REQUEST(403, "N207", "Unauthorized request, Only ADMIN Can do it"),
+
 
     /**
      * Token Exception

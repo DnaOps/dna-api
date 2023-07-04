@@ -22,6 +22,7 @@ public class User extends BaseEntity{
     private String password;
     private String email;
     private int level;
+    private String studentId;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
@@ -30,7 +31,7 @@ public class User extends BaseEntity{
     private String providerId;
 
     @Builder
-    public User(Long id, String userName, String password, String email, int level, UserRole role, String provider, String providerId) {
+    public User(Long id, String userName, String password, String email, int level, UserRole role, String provider, String providerId, String studentId) {
         this.id = id;
         this.userName = userName;
         this.password = password;
@@ -39,5 +40,10 @@ public class User extends BaseEntity{
         this.role = role;
         this.provider = provider;
         this.providerId = providerId;
+        this.studentId = studentId;
+    }
+
+    public void authorizeUser() {
+        this.role = UserRole.USER_ROLE;
     }
 }

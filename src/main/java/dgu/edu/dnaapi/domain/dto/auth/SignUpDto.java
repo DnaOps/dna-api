@@ -1,6 +1,7 @@
 package dgu.edu.dnaapi.domain.dto.auth;
 
 import dgu.edu.dnaapi.domain.User;
+import dgu.edu.dnaapi.domain.UserRole;
 import lombok.*;
 
 
@@ -27,6 +28,8 @@ public class SignUpDto {
                 .email(email)
                 .password(password)
                 .level(Integer.parseInt(studentId.substring(2,4)))
+                .studentId(studentId)
+                .role(UserRole.UNVERIFIED_USER_ROLE)
                 .build();
     }
 }
