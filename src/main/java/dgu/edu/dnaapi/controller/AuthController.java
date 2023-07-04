@@ -10,6 +10,8 @@ import dgu.edu.dnaapi.domain.response.*;
 import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshToken;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshTokenRepository;
+import dgu.edu.dnaapi.service.PostCommentService;
+import dgu.edu.dnaapi.service.PostService;
 import dgu.edu.dnaapi.service.TokenService;
 import dgu.edu.dnaapi.service.UserService;
 import dgu.edu.dnaapi.util.jwt.TokenProvider;
@@ -31,6 +33,8 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenService tokenService;
+    private final PostService postService;
+    private final PostCommentService postCommentService;
 
 
     @PostMapping("/auth/signUp")
@@ -69,9 +73,13 @@ public class AuthController {
                 .exist(false)
                 .build();
 
-        UserDto userResponse = UserDto.builder().username(findUser.getUserName())
+        UserDto userResponse = UserDto.builder()
+                .username(findUser.getUserName())
                 .createdDate(findUser.getCreatedDate())
                 .role(findUser.getRole())
+                .commentCount(postCommentService.getPostCommentCountByUserId(findUser.getId()))
+                .postCount(postService.getPostCountByUserId(findUser.getId()))
+                .userId(findUser.getId())
                 .build();
 
         LoginResponseDto result = new LoginResponseDto(tokenResponse, userResponse);
