@@ -1,11 +1,13 @@
 package dgu.edu.dnaapi.controller;
 
+import dgu.edu.dnaapi.annotation.JwtRequired;
 import dgu.edu.dnaapi.config.jwt.JwtProperties;
 import dgu.edu.dnaapi.domain.User;
 import dgu.edu.dnaapi.domain.UserDto;
 import dgu.edu.dnaapi.domain.UserRole;
 import dgu.edu.dnaapi.domain.dto.auth.*;
 import dgu.edu.dnaapi.domain.response.*;
+import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshToken;
 import dgu.edu.dnaapi.repository.refreshtoken.RefreshTokenRepository;
 import dgu.edu.dnaapi.service.TokenService;
@@ -18,7 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/auth/")
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -30,35 +33,29 @@ public class AuthController {
     private final TokenService tokenService;
 
 
-    @PostMapping("/signUp")
+    @PostMapping("/auth/signUp")
     @ApiOperation(value = "회원가입", notes = "회원가입을 진행한다.")
     public ResponseEntity<Message> signUp(@RequestBody SignUpDto signUpInfo) {
         System.out.println("signUpInfo = " + signUpInfo);
         User user = signUpInfo.toEntity();
-        user.setRole(UserRole.USER_ROLE);
         System.out.println("user = " + user);
-        Long userId = userService.join(user);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        Message message = Message.builder().data(userId).apiStatus(new ApiStatus(DnaStatusCode.OK, null)).build();;
-        return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
+        Message message = Message.createSuccessMessage(userService.join(user));
+        return ResponseEntity.createSuccessResponseMessage(message);
     }
 
     /**
      * 로그인
      * */
-    @PostMapping("/authenticate")
+    @PostMapping("/auth/authenticate")
     @ApiOperation(value = "로그인", notes = "유저의 로그인을 진행한다.")
     public ResponseEntity<Message> authorize(@RequestBody LoginRequestDto loginRequestDto) {
 
-        System.out.println("loginRequestDto.getEmail() = " + loginRequestDto.getEmail());
-
         User findUser = userService.login(loginRequestDto);
+        if(findUser.getRole().equals(UserRole.UNVERIFIED_USER_ROLE))
+            throw new DNACustomException(DnaStatusCode.UNVERIFIED_USER);
+
         String accessToken = tokenProvider.createToken(findUser, JwtProperties.EXPIRATION_TIME);
         String refreshToken = tokenProvider.createToken(findUser, JwtProperties.REFRESH_EXPIRATION_TIME);
-
-        /**
-         * Todo : 1. Refresh Token 발행, Refresh Token Redis 저장, logOut 시나리오 구현
-         */
 
         refreshTokenRepository.save(new RefreshToken(refreshToken, findUser.getId()));
 
@@ -72,23 +69,18 @@ public class AuthController {
                 .exist(false)
                 .build();
 
-        // Todo : 게시글, 댓글 수 가져오기
         UserDto userResponse = UserDto.builder().username(findUser.getUserName())
                 .createdDate(findUser.getCreatedDate())
                 .role(findUser.getRole())
                 .build();
 
         LoginResponseDto result = new LoginResponseDto(tokenResponse, userResponse);
-
-        Message message = Message.builder()
-                                    .data(result)
-                                    .apiStatus(new ApiStatus(DnaStatusCode.OK, null))
-                                    .build();
+        Message message = Message.createSuccessMessage(result);
 
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
-    @PostMapping("/accessToken")
+    @PostMapping("/auth/accessToken")
     @ApiOperation(value = "AccessToken 발급", notes = "유저의 Refresh Token 을 이용해 Access Token 재발급한다.")
     /**
      *  {
@@ -104,22 +96,50 @@ public class AuthController {
                 .jwt(new TokenDto(accessToken, refreshToken.getRefreshToken()))
                 .exist(false)
                 .build();
-        Message message = Message.builder().data(result).apiStatus(new ApiStatus(DnaStatusCode.OK, null)).build();;
+        Message message = Message.createSuccessMessage(result);
         return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/auth/logout")
     @ApiOperation(value = "로그아웃", notes = "유저의 로그아웃을 진행한다.")
     public ResponseEntity<Message> logOut(@RequestBody RefreshTokenDto refreshToken) {
-        // Todo : 1. accessToken 확인 2. RefreshToken 삭제 (userId 이용) 3. BlackList (유효기간동안 접근시)
-        Message message = Message.builder().data("LogoutTest").apiStatus(new ApiStatus(DnaStatusCode.OK, null)).build();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity(message, httpHeaders, HttpStatus.OK);
+        RefreshToken findRefreshToken = refreshTokenRepository.findById(refreshToken.getRefreshToken()).orElseThrow(
+                () -> new DNACustomException(DnaStatusCode.TOKEN_INVALID)
+        );
+        refreshTokenRepository.delete(findRefreshToken);
+        return ResponseEntity.createSuccessResponseMessage(Message.createSuccessMessage("success"));
+    }
+
+    @GetMapping("/auth/unverifiedUsers")
+    @ApiOperation(value = "미 승인 사용자", notes = "미승인 유저들 리스트를 출력한다.")
+    public ResponseEntity<Message> getUnverifiedUser() {
+        List<UnverifiedUser> unverifiedUserList = userService.getUnverifiedUserList();
+        return ResponseEntity.createSuccessResponseMessage(Message.createSuccessMessage(unverifiedUserList));
+    }
+
+    @PostMapping("/auth/unverifiedUsers/{userId}")
+    @ApiOperation(value = "미 승인 사용자 승인", notes = "미승인 유저를 승인한다.")
+    public ResponseEntity<Message> getUnverifiedUser(
+            @JwtRequired User requestUser,
+            @PathVariable("userId") Long userId
+    ) {
+        if(!requestUser.getRole().equals(UserRole.ADMIN_ROLE))
+            throw new DNACustomException(DnaStatusCode.UNAUTHORIZED_REQUEST);
+        long authorizeUserId = userService.authorizeUser(userService.getUserByUserId(userId));
+        return ResponseEntity.createSuccessResponseMessage(Message.createSuccessMessage(authorizeUserId));
     }
 
     @GetMapping("/test/authTest")
     @ApiOperation(value = "권한적용 체크", notes = "권한이 제한이 이루워지고 있는지 확인한다.")
     public String authTest(){
         return "AuthTest";
+    }
+
+    @PostMapping("/auth/admin/signUp")
+    public ResponseEntity<Message> adminSignUp(@RequestBody SignUpDto signUpInfo) {
+        User user = signUpInfo.toEntity();
+        user.setRole(UserRole.ADMIN_ROLE);
+        Message message = Message.createSuccessMessage(userService.join(user));
+        return ResponseEntity.createSuccessResponseMessage(message);
     }
 }
