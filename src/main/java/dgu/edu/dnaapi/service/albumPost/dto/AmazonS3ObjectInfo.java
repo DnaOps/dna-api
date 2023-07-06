@@ -1,4 +1,4 @@
-package dgu.edu.dnaapi.service.albumPost;
+package dgu.edu.dnaapi.service.albumPost.dto;
 
 import lombok.Getter;
 

@@ -112,4 +112,13 @@ public class AlbumPostRepositoryCustomImpl implements AlbumPostRepositoryCustom 
                 .where(albumPost.author.id.eq(userId))
                 .fetchOne();
     }
+
+    @Override
+    public Optional<AlbumPost> findWithAuthorByAlbumPostId(Long albumPostId) {
+        return Optional.ofNullable(queryFactory
+                        .selectFrom(albumPost)
+                        .join(albumPost.author, user).fetchJoin()
+                        .where(albumPost.albumPostId.eq(albumPostId))
+                        .fetchOne());
+    }
 }
