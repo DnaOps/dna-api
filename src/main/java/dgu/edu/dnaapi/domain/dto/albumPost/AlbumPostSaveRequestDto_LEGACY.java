@@ -12,17 +12,23 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AlbumPostSaveRequestDto {
+public class AlbumPostSaveRequestDto_LEGACY {
 
     private String title;
     private String content;
-    private String thumbnailImage;
+    private Integer thumbnailImageIndex;
 
     @Builder
-    public AlbumPostSaveRequestDto(String title, String content, String thumbnailImage) {
+    public AlbumPostSaveRequestDto_LEGACY(String title, String content, Integer thumbnailImageIndex) {
         this.title = title;
         this.content = content;
-        this.thumbnailImage = thumbnailImage;
+        this.thumbnailImageIndex = thumbnailImageIndex;
+    }
+
+    @Builder
+    public AlbumPostSaveRequestDto_LEGACY(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 
     public AlbumPost toEntity(User user) {
@@ -30,7 +36,6 @@ public class AlbumPostSaveRequestDto {
                 .title(title)
                 .content(content)
                 .author(user)
-                .thumbnailImage(thumbnailImage)
                 .albumPostImages(new ArrayList<>())
                 .build();
     }

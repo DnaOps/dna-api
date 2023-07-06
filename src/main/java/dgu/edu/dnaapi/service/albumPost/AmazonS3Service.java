@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import dgu.edu.dnaapi.domain.response.DnaStatusCode;
 import dgu.edu.dnaapi.exception.DNACustomException;
+import dgu.edu.dnaapi.service.albumPost.dto.AmazonS3ObjectInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class AmazonS3Service implements AlbumPostImageService {
         try(InputStream inputStream = file.getInputStream()) {
             amazonS3Client.putObject(new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
-            return new AmazonS3ObjectInfo(fileName,amazonS3Client.getUrl(bucketName, fileName).toString());
+            return new AmazonS3ObjectInfo(fileName, amazonS3Client.getUrl(bucketName, fileName).toString());
         } catch(IOException e) {
             throw new DNACustomException(DnaStatusCode.AMAZONS3_IO_EXCEPTION);
         }

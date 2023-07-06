@@ -4,11 +4,12 @@ import dgu.edu.dnaapi.controller.dto.PostSearchCondition;
 import dgu.edu.dnaapi.domain.*;
 import dgu.edu.dnaapi.domain.dto.albumPost.AlbumPostMetaDataResponseDto;
 import dgu.edu.dnaapi.domain.dto.albumPost.AlbumPostResponseDto;
-import dgu.edu.dnaapi.domain.dto.albumPost.AlbumPostUpdateRequestDto;
+import dgu.edu.dnaapi.domain.dto.albumPost.AlbumPostSaveRequestDto;
 import dgu.edu.dnaapi.domain.response.DnaStatusCode;
 import dgu.edu.dnaapi.domain.response.ListResponse;
 import dgu.edu.dnaapi.exception.DNACustomException;
 import dgu.edu.dnaapi.repository.albumPost.*;
+import dgu.edu.dnaapi.service.albumPost.dto.AmazonS3ObjectInfo;
 import dgu.edu.dnaapi.service.vo.PostCommentVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -70,7 +71,7 @@ public class AlbumPostService {
             throw new DNACustomException("해당 게시글의 작성자만 게시글을 삭제할 수 있습니다.", DnaStatusCode.INVALID_AUTHOR);
         }
         List<Long> allCommentIds = albumPost.getComments().stream().map(AlbumPostComment::getAlbumPostCommentId).collect(Collectors.toList());
-        List<AlbumPostImage> albumPostImages = albumPostImageRepository.findAllAlbumPostImageByAlbumPostId(deleteAlbumPostId);
+        // List<AlbumPostImage> albumPostImages = albumPostImageRepository.findAllAlbumPostImageByAlbumPostId(deleteAlbumPostId);
 
         albumPostCommentLikeRepository.deleteAllAlbumPostCommentLikesInAlbumPostCommentsIds(allCommentIds);
 
@@ -80,12 +81,12 @@ public class AlbumPostService {
             deleteAllMyChildAlbumPostComments(albumPostCommentHierarchyStructure);
         }
         albumPostLikeRepository.deleteAllAlbumPostLikesByAlbumPostId(deleteAlbumPostId);
-        albumPostImageRepository.deleteAlbumPostImagesByAlbumPostId(deleteAlbumPostId);
+        // albumPostImageRepository.deleteAlbumPostImagesByAlbumPostId(deleteAlbumPostId);
         albumPostRepository.deleteAlbumPostByAlbumPostId(deleteAlbumPostId);
-        List<String> imageKeys = albumPostImages.stream().map(AlbumPostImage::getImageKey).collect(Collectors.toList());
-        for (String imageKey : imageKeys) {
-            albumPostImageService.delete(imageKey);
-        }
+//        List<String> imageKeys = albumPostImages.stream().map(AlbumPostImage::getImageKey).collect(Collectors.toList());
+//        for (String imageKey : imageKeys) {
+//            albumPostImageService.delete(imageKey);
+//        }
         return deleteAlbumPostId;
     }
 
@@ -112,49 +113,49 @@ public class AlbumPostService {
         }
     }
 
-    @Transactional
-    public Long update(AlbumPostUpdateRequestDto requestDto, Long albumPostId, User user, List<MultipartFile> albumPostImages) throws IOException {
-
-        AlbumPost originalAlbumPost = albumPostRepository.findWithAlbumPostImagesByAlbumPostId(albumPostId)
-                .orElseThrow(() -> new DNACustomException(DnaStatusCode.INVALID_POST));
-
-        if (!originalAlbumPost.getAuthor().getId().equals(user.getId()))
-            throw new DNACustomException(DnaStatusCode.INVALID_AUTHOR);
-
-        List<AmazonS3ObjectInfo> albumPostImageInfos = new ArrayList<>();
-        if(albumPostImages != null){
-            for (MultipartFile albumPostImage : albumPostImages) {
-                albumPostImageInfos.add(albumPostImageService.upload(albumPostImage, "albumPost"));
-            }
-            for (AmazonS3ObjectInfo info : albumPostImageInfos) {
-                albumPostImageRepository.save(new AlbumPostImage(info.getImageURL(), originalAlbumPost, info.getKey()));
-            }
-        }
-
-        String thumbnailImage = null;
-        if(hasText(requestDto.getThumbnailImage()))
-            thumbnailImage = requestDto.getThumbnailImage();
-        else if(requestDto.getThumbnailImageIndex() != null)
-            thumbnailImage = albumPostImageInfos.get(requestDto.getThumbnailImageIndex()).getImageURL();
-
-        originalAlbumPost.update(requestDto.getTitle(), requestDto.getContent(), thumbnailImage);
-
-        List<String> deleteImageKeys = new ArrayList<>();
-        for (AlbumPostImage albumPostImage : originalAlbumPost.getAlbumPostImages()) {
-            for (String deleteImage : requestDto.getDeleteImages()) {
-                if(albumPostImage.getImageUrl().equals(deleteImage)){
-                    albumPostImageRepository.deleteByAlbumPostImageId(albumPostImage.getAlbumPostImageId());
-                    deleteImageKeys.add(albumPostImage.getImageKey());
-                    break;
-                }
-            }
-        }
-
-        for (String deleteImageKey : deleteImageKeys) {
-            albumPostImageService.delete(deleteImageKey);
-        }
-        return albumPostId;
-    }
+//    @Transactional
+//    public Long update_lagacy(AlbumPostUpdateRequestDto requestDto, Long albumPostId, User user, List<MultipartFile> albumPostImages) throws IOException {
+//
+//        AlbumPost originalAlbumPost = albumPostRepository.findWithAlbumPostImagesByAlbumPostId(albumPostId)
+//                .orElseThrow(() -> new DNACustomException(DnaStatusCode.INVALID_POST));
+//
+//        if (!originalAlbumPost.getAuthor().getId().equals(user.getId()))
+//            throw new DNACustomException(DnaStatusCode.INVALID_AUTHOR);
+//
+//        List<AmazonS3ObjectInfo> albumPostImageInfos = new ArrayList<>();
+//        if(albumPostImages != null){
+//            for (MultipartFile albumPostImage : albumPostImages) {
+//                albumPostImageInfos.add(albumPostImageService.upload(albumPostImage, "albumPost"));
+//            }
+//            for (AmazonS3ObjectInfo info : albumPostImageInfos) {
+//                albumPostImageRepository.save(new AlbumPostImage(info.getImageURL(), originalAlbumPost, info.getKey()));
+//            }
+//        }
+//
+//        String thumbnailImage = null;
+//        if(hasText(requestDto.getThumbnailImage()))
+//            thumbnailImage = requestDto.getThumbnailImage();
+//        else if(requestDto.getThumbnailImageIndex() != null)
+//            thumbnailImage = albumPostImageInfos.get(requestDto.getThumbnailImageIndex()).getImageURL();
+//
+//        originalAlbumPost.update(requestDto.getTitle(), requestDto.getContent(), thumbnailImage);
+//
+//        List<String> deleteImageKeys = new ArrayList<>();
+//        for (AlbumPostImage albumPostImage : originalAlbumPost.getAlbumPostImages()) {
+//            for (String deleteImage : requestDto.getDeleteImages()) {
+//                if(albumPostImage.getImageUrl().equals(deleteImage)){
+//                    albumPostImageRepository.deleteByAlbumPostImageId(albumPostImage.getAlbumPostImageId());
+//                    deleteImageKeys.add(albumPostImage.getImageKey());
+//                    break;
+//                }
+//            }
+//        }
+//
+//        for (String deleteImageKey : deleteImageKeys) {
+//            albumPostImageService.delete(deleteImageKey);
+//        }
+//        return albumPostId;
+//    }
 
     public ListResponse findAllAlbumPostMetaDataWithCondition(PostSearchCondition condition, Pageable pageable) {
         List<AlbumPostMetaDataResponseDto> albumPostMetaDataResponseDtoList = albumPostRepository.search(condition, pageable);
@@ -167,5 +168,30 @@ public class AlbumPostService {
                 .list(albumPostMetaDataResponseDtoList)
                 .hasNext(hasNext)
                 .build();
+    }
+
+    @Transactional
+    public AmazonS3ObjectInfo saveImage(MultipartFile albumPostImage) throws IOException {
+        AmazonS3ObjectInfo amazonS3ObjectInfo = albumPostImageService.upload(albumPostImage, "albumPost");
+        return amazonS3ObjectInfo;
+    }
+
+    @Transactional
+    public Long savePost(AlbumPost albumPost){
+        if(!hasText(albumPost.getTitle()) || !hasText(albumPost.getContent()))
+            throw new DNACustomException("제목이나 내용이 없는 글입니다. 게시글 작성 조건을 확인해주세요.", DnaStatusCode.INVALID_INPUT);
+        return albumPostRepository.save(albumPost).getAlbumPostId();
+    }
+
+    @Transactional
+    public Long updateAlbumPost(AlbumPostSaveRequestDto requestDto, Long albumPostId, User user) {
+        AlbumPost albumPost = albumPostRepository.findWithAuthorByAlbumPostId(albumPostId).orElseThrow(
+                () -> new DNACustomException(DnaStatusCode.INVALID_POST));
+
+        if(!user.getId().equals(albumPost.getAuthor().getId()))
+            throw new DNACustomException(DnaStatusCode.INVALID_AUTHOR);
+
+        albumPost.update(requestDto.getTitle(), requestDto.getTitle(), requestDto.getThumbnailImage());
+        return albumPost.getAlbumPostId();
     }
 }
