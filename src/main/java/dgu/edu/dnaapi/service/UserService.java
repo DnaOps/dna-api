@@ -66,4 +66,9 @@ public class UserService {
         user.authorizeUser();
         return user.getId();
     }
+
+    public void validateDuplicateEmail(String email) {
+        userRepository.findUserByEmail(email)
+                .ifPresent((e)-> {throw new DNACustomException("이미 존재하는 회원입니다.", DnaStatusCode.DUPLICATE_EMAIL);});
+    }
 }
