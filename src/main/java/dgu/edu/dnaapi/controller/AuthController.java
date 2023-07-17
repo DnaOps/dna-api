@@ -49,13 +49,13 @@ public class AuthController {
 
     /**
      * 로그인
-     * */
+     */
     @PostMapping("/auth/authenticate")
     @ApiOperation(value = "로그인", notes = "유저의 로그인을 진행한다.")
     public ResponseEntity<Message> authorize(@RequestBody LoginRequestDto loginRequestDto) {
 
         User findUser = userService.login(loginRequestDto);
-        if(findUser.getRole().equals(UserRole.UNVERIFIED_USER_ROLE))
+        if (findUser.getRole().equals(UserRole.UNVERIFIED_USER_ROLE))
             throw new DNACustomException(DnaStatusCode.UNVERIFIED_USER);
 
         String accessToken = tokenProvider.createToken(findUser, JwtProperties.EXPIRATION_TIME);
@@ -131,7 +131,7 @@ public class AuthController {
             @JwtRequired User requestUser,
             @PathVariable("userId") Long userId
     ) {
-        if(!requestUser.getRole().equals(UserRole.ADMIN_ROLE))
+        if (!requestUser.getRole().equals(UserRole.ADMIN_ROLE))
             throw new DNACustomException(DnaStatusCode.UNAUTHORIZED_REQUEST);
         long authorizeUserId = userService.authorizeUser(userService.getUserByUserId(userId));
         return ResponseEntity.createSuccessResponseMessage(Message.createSuccessMessage(authorizeUserId));
@@ -139,7 +139,7 @@ public class AuthController {
 
     @GetMapping("/test/authTest")
     @ApiOperation(value = "권한적용 체크", notes = "권한이 제한이 이루워지고 있는지 확인한다.")
-    public String authTest(){
+    public String authTest() {
         return "AuthTest";
     }
 
@@ -149,5 +149,22 @@ public class AuthController {
         user.setRole(UserRole.ADMIN_ROLE);
         Message message = Message.createSuccessMessage(userService.join(user));
         return ResponseEntity.createSuccessResponseMessage(message);
+    }
+
+    @PostMapping("/auth/signUp/oauth")
+    @ApiOperation(value = "Oauth 회원가입", notes = "Oauth 회원가입 요청.")
+    public ResponseEntity<Message> signUpOauth(
+            @RequestBody OauthSignUpDto oauthSignUpDto
+    ) {
+        User user = oauthSignUpDto.toUserEntity();
+        return ResponseEntity.createSuccessResponseMessage(Message.createSuccessMessage(userService.join(user)));
+    }
+
+    @GetMapping("/auth/duplicate/{email}")
+    public ResponseEntity<Message> duplicate(
+            @PathVariable("email") String email
+    ) {
+        userService.validateDuplicateEmail(email);
+        return ResponseEntity.createSuccessResponseMessage(Message.createSuccessMessage("사용가능한 이메일입니다."));
     }
 }

@@ -29,9 +29,10 @@ public class User extends BaseEntity{
 
     private String provider;
     private String providerId;
+    private String oauthId;
 
     @Builder
-    public User(Long id, String userName, String password, String email, int level, UserRole role, String provider, String providerId, String studentId) {
+    public User(Long id, String userName, String password, String email, int level, UserRole role, String provider, String providerId, String studentId, String oauthId) {
         this.id = id;
         this.userName = userName;
         this.password = password;
@@ -41,6 +42,7 @@ public class User extends BaseEntity{
         this.provider = provider;
         this.providerId = providerId;
         this.studentId = studentId;
+        this.oauthId = oauthId;
     }
 
     public void authorizeUser() {

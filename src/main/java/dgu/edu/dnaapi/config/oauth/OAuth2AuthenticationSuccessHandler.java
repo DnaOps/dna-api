@@ -35,15 +35,26 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String targetUrl = determineTargetUrl(request, response, authentication);
-        System.out.println("targetUrl = " + targetUrl);
+//        String targetUrl = determineTargetUrl(request, response, authentication);
+//        System.out.println("targetUrl = " + targetUrl);
 
         if (response.isCommitted()) {
-            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+            //logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
         }
         System.out.println("authentication = " + authentication);
         // clearAuthenticationAttributes(request, response);
+
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        System.out.println("principalDetails.getAttributes() = " + principalDetails.getAttributes());
+        if((Boolean)principalDetails.getAttributes().get("isExist")){
+            String targetUrl = determineTargetUrl(request, response, authentication);
+            System.out.println("targetUrl = " + targetUrl);
+            getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        }else{
+            String oauthSignUpPageRedirectUrl = getOauthSignUpPageRedirectUrl(request, response, authentication);
+            getRedirectStrategy().sendRedirect(request, response, oauthSignUpPageRedirectUrl);
+        }
 
         // Todo : OAUTH Token 주는 방식 변경 필요 -> 현재 URL Param으로 주는 중
 
@@ -78,7 +89,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 //        response.setHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + accessToken);
 //        response.setHeader("Location", targetUrl);
 
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        // getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
@@ -98,6 +109,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .queryParam("accessToken", accessToken)
                 .queryParam("refreshToken", refreshToken)
                 .build().toUriString();
+    }
+
+    protected String getOauthSignUpPageRedirectUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        String baseUrl = "http://localhost:3000/";
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        return UriComponentsBuilder.fromUriString(baseUrl)
+                .queryParam("provider", (String) principalDetails.getAttributes().get("provider"))
+                .queryParam("providerId", (String) principalDetails.getAttributes().get("providerId"))
+                .queryParam("email", (String) principalDetails.getAttributes().get("email"))
+                .build()
+                .toUriString();
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
